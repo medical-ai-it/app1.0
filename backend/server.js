@@ -37,7 +37,14 @@ if (!fs.existsSync(recordingsDir)) {
 // ==================== MIDDLEWARE ====================
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:8000', 'http://localhost:8080', 'https://medical-ai.it', 'https://app.medical-ai.it'],
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'http://localhost:8080',
+    'https://medical-ai.it',  // ✅ Aggiungi il tuo dominio
+    'https://app.medical-ai.it',
+    'https://app1-0-m2yf.onrender.com'  // ✅ Aggiungi anche Render
+  ],
   credentials: true
 }));
 
