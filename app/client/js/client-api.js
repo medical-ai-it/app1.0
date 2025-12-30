@@ -5,8 +5,13 @@
  * ============================================================================
  */
 
+// Determina l'URL base in base all'ambiente
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3001'
+    : 'https://app1-0-m2yf.onrender.com';
+
 const CLIENT_API_CONFIG = {
-    baseURL: 'http://localhost:3001/api',
+    baseURL: `${API_BASE_URL}/api`,
     endpoints: {
         auth: '/auth',
         patients: '/patients',
@@ -14,6 +19,8 @@ const CLIENT_API_CONFIG = {
         studios: '/studios'
     }
 };
+
+console.log(`🔗 API Base URL: ${CLIENT_API_CONFIG.baseURL}`);
 
 // ============================================================================
 // SESSION MANAGEMENT
@@ -558,3 +565,6 @@ window.exportRefertoAsJSON = exportRefertoAsJSON;
 
 // Session
 window.getSessionData = getSessionData;
+
+// Esponi API_BASE_URL globalmente per altri file
+window.API_BASE_URL = API_BASE_URL;

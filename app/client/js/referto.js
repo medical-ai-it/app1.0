@@ -147,12 +147,19 @@ function showRefertoError(message) {
 /**
  * Attiva l'elaborazione del referto tramite API
  * Chiama POST /api/recordings/:id/process per avviare Whisper + GPT-4
+ * ✅ AGGIORNATA: Usa window.API_BASE_URL dal client-api.js
  */
 async function triggerRefertoProcessing(recordingId) {
     try {
         console.log(`🚀 Attivazione elaborazione referto (recordingId: ${recordingId})...`);
         
-        const response = await fetch(`http://localhost:3001/api/recordings/${recordingId}/process`, {
+        // Usa API_BASE_URL dal client-api.js (dinamicamente scelto tra localhost e Render)
+        const apiBaseUrl = window.API_BASE_URL || 'http://localhost:3001';
+        const url = `${apiBaseUrl}/api/recordings/${recordingId}/process`;
+        
+        console.log(`🔗 URL endpoint: ${url}`);
+        
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -187,6 +194,7 @@ async function triggerRefertoProcessing(recordingId) {
 async function loadRefertoFromBackend(recordingId, patientId) {
     let attempts = 0;
     const maxAttempts = 24; // 2 minuti: 24 × 5 secondi
+    let processingTriggered = false; // Flag locale per tenere traccia del trigger
     
     return new Promise((resolve, reject) => {
         const pollReferto = async () => {
@@ -232,9 +240,9 @@ async function loadRefertoFromBackend(recordingId, patientId) {
                     // ⏳ Still processing - no referto yet
                     
                     // 🚀 Al PRIMO tentativo se status è "pending", attiva l'elaborazione
-                    if (processingStatus === 'pending' && !processingStarted && attempts === 0) {
+                    if (processingStatus === 'pending' && !processingTriggered && attempts === 0) {
                         console.log('🚀 Status è "pending" - Attivazione elaborazione...');
-                        processingStarted = true;
+                        processingTriggered = true;
                         
                         const triggerSuccess = await triggerRefertoProcessing(recordingId);
                         if (!triggerSuccess) {

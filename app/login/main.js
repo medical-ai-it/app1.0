@@ -5,7 +5,10 @@
  * ============================================================================
  */
 
-const BACKEND_URL = 'http://localhost:3001/api';
+// Determina l'URL base in base all'ambiente
+const BACKEND_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:3001/api'
+    : 'https://app1-0-m2yf.onrender.com/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🔐 Login page initialized');
@@ -156,7 +159,7 @@ function setupLoginForm() {
             console.error('❌ Login error:', error);
             console.error('❌ Error message:', error.message);
             console.error('❌ Error stack:', error.stack);
-            showError('Errore di connessione. Verifica che il backend sia acceso su localhost:3001');
+            showError('Errore di connessione. Verifica il backend.');
             showLoading(false);
         }
     });
@@ -230,6 +233,7 @@ function closeForgotPasswordModal() {
 
 /**
  * Invia richiesta reset password
+ * ✅ AGGIORNATA: Usa BACKEND_URL dinamico
  */
 async function sendPasswordReset() {
     const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
@@ -242,6 +246,8 @@ async function sendPasswordReset() {
     }
 
     try {
+        console.log('📧 Sending password reset request for:', email);
+        
         const response = await fetch(`${BACKEND_URL}/auth/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -249,6 +255,7 @@ async function sendPasswordReset() {
         });
 
         const result = await response.json();
+        console.log('📊 Password reset response:', result);
 
         if (result.success) {
             messageEl.className = 'form-message success';
