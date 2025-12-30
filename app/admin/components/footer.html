@@ -1,0 +1,101 @@
+<footer class="app-footer">
+    <div class="footer-wrapper">
+        <!-- Footer Top Section - Newsletters & CTA -->
+        <div class="footer-newsletter">
+            <div class="newsletter-content">
+                <div class="newsletter-header">
+                    <h4><i class="fas fa-envelope"></i> Iscriviti agli Aggiornamenti Admin</h4>
+                    <p>Ricevi notifiche su nuove funzionalità e security updates</p>
+                </div>
+                <form class="newsletter-form" onsubmit="subscribeAdminNewsletter(event)">
+                    <input type="email" class="newsletter-input" placeholder="La tua email amministrativa" required>
+                    <button type="submit" class="newsletter-button">
+                        <i class="fas fa-bell"></i>
+                        Iscriviti
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer Bottom Section -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-left">
+                <div class="footer-branding">
+                    <h4 class="footer-title">Medical AI</h4>
+                    <p class="footer-subtitle">Admin Dashboard v1.0</p>
+                </div>
+                <p class="footer-description">
+                    Pannello amministrativo per la gestione completa della piattaforma Medical AI.
+                </p>
+            </div>
+
+            <div class="footer-bottom-center">
+                <div class="footer-links-group">
+                    <h5 class="footer-links-title">Link Utili</h5>
+                    <ul class="footer-links">
+                        <li><a href="https://medical-ai.it" target="_blank" rel="noopener noreferrer">Sito Principale</a></li>
+                        <li><a href="https://app.medical-ai.it" target="_blank" rel="noopener noreferrer">Client App</a></li>
+                        <li><a href="https://docs.medical-ai.it" target="_blank" rel="noopener noreferrer">API Docs</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-group">
+                    <h5 class="footer-links-title">Legal</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="openPrivacyPolicy(); return false;">Privacy Policy</a></li>
+                        <li><a href="#" onclick="openTermsConditions(); return false;">Terms & Conditions</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom-right">
+                <div class="footer-badges">
+                    <span class="badge"><i class="fas fa-lock"></i> Crittografato</span>
+                    <span class="badge"><i class="fas fa-shield-alt"></i> Protetto</span>
+                    <span class="badge"><i class="fas fa-certificate"></i> Certificato</span>
+                </div>
+                <div class="footer-social">
+                    <a href="https://twitter.com/medical_ai" target="_blank" rel="noopener noreferrer" class="social-icon" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/medical-ai" target="_blank" rel="noopener noreferrer" class="social-icon" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://github.com/medical-ai" target="_blank" rel="noopener noreferrer" class="social-icon" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Divider -->
+        <div class="footer-divider"></div>
+
+        <!-- Footer Meta -->
+        <div class="footer-meta">
+            <div class="footer-left-meta">
+                <p class="footer-copyright">
+                    &copy; 2025 <strong>Medical AI</strong>. Admin Panel. Tutti i diritti riservati.
+                </p>
+            </div>
+            <div class="footer-center-meta">
+                <span class="meta-item">
+                    <i class="fas fa-server"></i>
+                    <span id="footerStatus">Status: Online</span>
+                </span>
+                <span class="meta-separator">•</span>
+                <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="footerTime">Caricamento...</span>
+                </span>
+            </div>
+            <div class="footer-right-meta">
+                <p class="footer-version">
+                    <i class="fas fa-code-branch"></i>
+                    v1.0 - Medical AI Admin Dashboard
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>

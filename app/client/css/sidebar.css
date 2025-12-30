@@ -1,0 +1,201 @@
+/* ============================================================================
+   SIDEBAR STYLES - Medical AI
+   ============================================================================ */
+
+:root {
+    --primary-color: #0061b1;
+    --primary-light: #0073d4;
+    --primary-lighter: #e3f2fd;
+    --text-dark: #1a1a1a;
+    --text-light: #666;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== SIDEBAR CONTAINER ===== */
+.sidebar {
+    width: 260px;
+    background: white;
+    border-right: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+    position: sticky;
+    top: 80px;
+}
+
+/* ===== SIDEBAR NAVIGATION ===== */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    gap: 0;
+}
+
+/* ===== NAV LINKS ===== */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 20px;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-link i {
+    font-size: 1.2em;
+    min-width: 24px;
+    text-align: center;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.nav-label {
+    flex: 1;
+    transition: color 0.3s ease;
+}
+
+/* Hover state */
+.nav-link:hover {
+    background: var(--primary-lighter);
+    border-left-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.nav-link:hover i {
+    color: var(--primary-color);
+}
+
+/* Active state */
+.nav-link.active {
+    background: var(--primary-lighter);
+    border-left-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.nav-link.active i {
+    color: var(--primary-color);
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+        max-height: calc(100vh - 70px);
+    }
+
+    .nav-link {
+        padding: 12px 16px;
+        gap: 12px;
+        font-size: 0.9em;
+    }
+
+    .nav-link i {
+        font-size: 1.1em;
+    }
+
+    .sidebar-nav {
+        padding: 15px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 60px;
+        bottom: 0;
+        width: 100%;
+        max-height: calc(100vh - 60px);
+        z-index: 999;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-nav {
+        padding: 10px 0;
+        gap: 0;
+    }
+
+    .nav-link {
+        padding: 12px 20px;
+        gap: 12px;
+        font-size: 0.95em;
+    }
+
+    .nav-link i {
+        font-size: 1.1em;
+        min-width: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        max-height: calc(100vh - 60px);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-nav {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .nav-link {
+        flex-direction: column;
+        padding: 10px;
+        gap: 6px;
+        justify-content: center;
+        align-items: center;
+        border-left: none;
+        border-top: 4px solid transparent;
+        text-align: center;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        border-left: none;
+        border-top-color: var(--primary-color);
+    }
+
+    .nav-label {
+        font-size: 0.75em;
+        font-weight: 600;
+    }
+
+    .nav-link i {
+        font-size: 1.3em;
+    }
+}

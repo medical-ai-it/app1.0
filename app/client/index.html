@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Medical AI - Piattaforma di registrazione audio per appuntamenti medici">
+    <meta name="theme-color" content="#0061b1">
+    <title>Medical AI - Dashboard Studio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://medical-ai.it/assets/images/favicon.png">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/footer.css">
+    
+    <!-- Iubenda Consent Database -->
+    <script type="text/javascript">
+        var _iub = _iub || {}; 
+        _iub.cons_instructions = _iub.cons_instructions || []; 
+        _iub.cons_instructions.push(["init", {api_key: "1u2NW5lmpLpqkAau4IorkrcoS9VqavmV"}]);
+    </script>
+    <script type="text/javascript" src="https://cdn.iubenda.com/cons/iubenda_cons.js" async></script>
+</head>
+<body>
+    <!-- ============================================================================ -->
+    <!-- SESSION VALIDATION -->
+    <!-- ============================================================================ -->
+    <script>
+        // ✅ VERIFICA SESSIONE IMMEDIATAMENTE
+        const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+        
+        const isClient = window.location.pathname.includes('/client/');
+        
+        if (!session || !session.userId) {
+            console.log('❌ No session - redirecting to login');
+            window.location.replace('../login/index.html');
+        } else if (isClient && session.userType !== 'studio') {
+            console.log('❌ Not studio user - redirecting to login');
+            window.location.replace('../login/index.html');
+        } else {
+            console.log(`✅ Session valid: ${session.email}`);
+        }
+    </script>
+
+    <!-- ============================================================================ -->
+    <!-- APP CONTAINER -->
+    <!-- ============================================================================ -->
+    <div id="app">
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="dashboard-container" style="display: none;">
+            <!-- Header Container (dinamico) -->
+            <div id="headerContainer"></div>
+
+            <!-- Dashboard Wrapper -->
+            <div class="dashboard-wrapper">
+                <!-- Sidebar Container (dinamico) -->
+                <div id="sidebarContainer"></div>
+
+                <!-- Main Content Area -->
+                <main class="dashboard-main">
+                    <!-- ============================================================================ -->
+                    <!-- PATIENTS PAGE -->
+                    <!-- ============================================================================ -->
+                    <div id="patientsPage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <div>
+                                    <h2>Gestione Pazienti</h2>
+                                    <p class="page-subtitle">Aggiungi e gestisci i pazienti dello studio</p>
+                                </div>
+                                <button id="addPatientBtn" class="btn-primary btn-lg">
+                                    <i class="fas fa-user-plus"></i>
+                                    Aggiungi Paziente
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="patients-card">
+                            <table class="patients-table" id="patientsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Cognome</th>
+                                        <th>Email</th>
+                                        <th>Telefono</th>
+                                        <th>Data Creazione</th>
+                                        <th>Azioni</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patientsTableBody">
+                                    <tr>
+                                        <td colspan="6" style="text-align: center; padding: 30px;">
+                                            <i class="fas fa-hourglass-half"></i> Caricamento...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================================ -->
+                    <!-- RECORDING PAGE -->
+                    <!-- ============================================================================ -->
+                    <div id="recordingPage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <h2><i class="fas fa-microphone"></i> Registra Appuntamento</h2>
+                            <p class="page-subtitle">Registra e salva gli appuntamenti con i pazienti</p>
+                        </div>
+                        
+                        <div class="recording-card">
+                            <!-- Patient Selection Section -->
+                            <div class="appointment-info">
+                                <div class="form-group">
+                                    <label for="patientSelect">
+                                        <i class="fas fa-user"></i>
+                                        Seleziona Paziente *
+                                    </label>
+                                    <select id="patientSelect" class="input-field" required>
+                                        <option value="">-- Seleziona un paziente --</option>
+                                    </select>
+                                </div>
+
+                                <!-- ✅ VISIT TYPE SELECTION -->
+                                <div class="form-group" id="visitTypeGroup" style="display: none;">
+                                    <label for="visitType">
+                                        <i class="fas fa-stethoscope"></i>
+                                        Tipologia di Visita *
+                                    </label>
+                                    <select id="visitType" class="input-field" required>
+                                        <option value="">-- Seleziona tipologia --</option>
+                                        <option value="prima_visita_generica">Prima visita generica</option>
+                                        <option value="prima_visita_pedodonzia">Prima visita pedodonzia</option>
+                                        <option value="chirurgia_impianti">Visita Chirurgia e Impianti</option>
+                                        <option value="visita_ortodontica">Visita Ortodontica</option>
+                                        <option value="visita_parodontale">Visita Parodontale</option>
+                                    </select>
+                                </div>
+
+                                <!-- ✅ DOCTOR NAME INPUT -->
+                                <div class="form-group" id="doctorNameGroup" style="display: none;">
+                                    <label for="doctorName">
+                                        <i class="fas fa-user-md"></i>
+                                        Nome del Dottore *
+                                    </label>
+                                    <input type="text" id="doctorName" class="input-field" placeholder="Es. Dr. Mario Rossi" required>
+                                </div>
+                                
+                                <!-- Empty State quando nessun paziente -->
+                                <div id="emptyPatientsMessage" class="empty-patients-message" style="display: none;">
+                                    <p style="color: #EF5350; font-weight: 600; margin: 0;">
+                                        <i class="fas fa-exclamation-circle"></i> Nessun paziente disponibile
+                                    </p>
+                                    <p style="color: #999; font-size: 0.9em; margin: 5px 0 0 0;">
+                                        Accedi alla sezione <strong>Pazienti</strong> per aggiungere il primo paziente.
+                                    </p>
+                                    <button type="button" class="btn-primary" onclick="showPage('patients')" style="margin-top: 10px; padding: 10px 20px; font-size: 0.9em;">
+                                        <i class="fas fa-users"></i> Vai a Pazienti
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Consent Section -->
+                            <form id="consentForm" name="consentForm" style="display: none;">
+                                <div class="consent-section">
+                                    <h3 style="margin: 0 0 15px 0; color: var(--text-dark);">
+                                        <i class="fas fa-shield-alt"></i>
+                                        Consensi Necessari
+                                    </h3>
+                                    
+                                    <div class="consent-item">
+                                        <input type="checkbox" id="privacyConsent" name="privacy_policy" class="consent-checkbox">
+                                        <label for="privacyConsent" class="consent-label">
+                                            Ho letto e accetto la 
+                                            <button type="button" class="consent-link" onclick="openPrivacyPolicy(); return false;">
+                                                Privacy Policy
+                                            </button>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="consent-item">
+                                        <input type="checkbox" id="termsConsent" name="terms_conditions" class="consent-checkbox">
+                                        <label for="termsConsent" class="consent-label">
+                                            Ho letto e accetto i 
+                                            <button type="button" class="consent-link" onclick="openTermsConditions(); return false;">
+                                                Termini e Condizioni
+                                            </button>
+                                        </label>
+                                    </div>
+
+                                    <div id="consentError" class="consent-error" style="display: none;">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Devi accettare Privacy Policy e Termini & Condizioni per procedere
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- Recording Controls -->
+                            <div class="recording-controls" style="display: none;">
+                                <button id="startRecording" type="button" class="btn-record">
+                                    <i class="fas fa-microphone"></i>
+                                    Inizia Registrazione
+                                </button>
+                                <button id="stopRecording" type="button" class="btn-stop" style="display: none;">
+                                    <i class="fas fa-stop-circle"></i>
+                                    Ferma Registrazione
+                                </button>
+                            </div>
+
+                            <!-- Recording Tips Carousel -->
+                            <div id="recordingTipsCarousel" class="recording-tips-carousel" style="display: none;">
+                                <div class="tips-header">
+                                    <h3 style="margin: 0;">
+                                        <i class="fas fa-clipboard-list"></i> 
+                                        Checklist Appuntamento
+                                    </h3>
+                                    <span class="tips-counter">
+                                        <span id="tipCounter">1</span>/<span id="tipTotal">9</span>
+                                    </span>
+                                </div>
+                                <div class="tips-content">
+                                    <p id="tipText">✓ Ho descritto i denti mancanti</p>
+                                </div>
+                                <div class="tips-navigation">
+                                    <button type="button" class="tips-btn" onclick="previousRecordingTip()">
+                                        <i class="fas fa-chevron-left"></i> Precedente
+                                    </button>
+                                    <div class="tips-dots" id="tipsDots"></div>
+                                    <button type="button" class="tips-btn" onclick="nextRecordingTip()">
+                                        Successivo <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                                <div class="auto-play-badge">
+                                    <i class="fas fa-hourglass-half"></i> Auto-advance: 8 secondi
+                                </div>
+                            </div>
+
+                            <!-- Recording Status -->
+                            <div id="recordingStatus" class="recording-status" style="display: none;">
+                                <div class="timer" id="recordingTimer">00:00</div>
+                                <p class="status-text">
+                                    <i class="fas fa-circle" style="color: #ef5350; animation: pulse 1s infinite;"></i> 
+                                    Registrazione in corso...
+                                </p>
+                            </div>
+
+                            <!-- Recording Playback -->
+                            <div id="recordingPlayback" class="playback-section" style="display: none;">
+                                <h3><i class="fas fa-play"></i> Anteprima Registrazione</h3>
+                                <audio id="audioPlayback" controls style="width: 100%; margin-bottom: 20px;"></audio>
+                                <div class="playback-actions">
+                                    <button id="retakeRecording" type="button" class="btn-secondary btn-lg">
+                                        <i class="fas fa-redo"></i> Registra di Nuovo
+                                    </button>
+                                    <button id="submitRecording" type="button" class="btn-primary btn-lg">
+                                        <i class="fas fa-check"></i> Completa
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Submission Status -->
+                            <div id="submissionStatus" class="submission-status" style="display: none;">
+                                <p id="statusMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================================ -->
+                    <!-- GUIDE PAGE -->
+                    <!-- ============================================================================ -->
+                    <div id="guidePage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <h2><i class="fas fa-book"></i> Guida all'Appuntamento</h2>
+                            <p class="page-subtitle">Come condurre un appuntamento completo e strutturato</p>
+                        </div>
+                        
+                        <div class="guide-card">
+                            <!-- Introduzione -->
+                            <div class="guide-section">
+                                <h3>Benvenuto nella Guida all'Appuntamento</h3>
+                                <p>Questa guida ti aiuterà a condurre un appuntamento completo e strutturato. Segui attentamente i passaggi per raccogliere tutte le informazioni necessarie e formulare un piano di cura accurato.</p>
+                            </div>
+
+                            <!-- Fase 1 -->
+                            <div class="guide-section">
+                                <h3>Fase 1: Descrizione della Situazione della Bocca</h3>
+                                <p><strong>Obiettivo:</strong> Documentare lo stato attuale della dentatura del paziente</p>
+                                
+                                <div class="guide-subsection">
+                                    <h4>Cosa descrivere:</h4>
+                                    <ul class="guide-checklist">
+                                        <li><strong>Denti mancanti:</strong> Identifica e descrivi tutti i denti estratti o mai sviluppati</li>
+                                        <li><strong>Stato dei denti presenti:</strong> Per ogni quadrante, analizza carie, otturazioni, devitalizzazioni e corone</li>
+                                        <li><strong>Situazione generale:</strong> Descrivi il colore, l'allineamento e la salute gengivale</li>
+                                    </ul>
+                                </div>
+
+                                <div class="guide-example">
+                                    <h4><i class="fas fa-clipboard"></i> Esempio:</h4>
+                                    <p>"Nel quadrante 1 sono presenti solo i denti 11, 12, 13 e 15, mentre sono stati estratti i denti 14, 16, 17 e 18. Il dente 11 presenta una importante lesione cariosa, i denti 12 e 13 sono sani, mentre il 15 è stato devitalizzato ed è presente una corona in metallo-ceramica."</p>
+                                </div>
+                            </div>
+
+                            <!-- Fase 2 -->
+                            <div class="guide-section">
+                                <h3>Fase 2: Descrizione delle Cure Consigliate</h3>
+                                <p><strong>Obbiettivo:</strong> Proporre un piano di cura chiaro e strutturato</p>
+                                
+                                <div class="guide-subsection">
+                                    <h4>Linee guida per la descrizione:</h4>
+                                    <ul class="guide-checklist">
+                                        <li><strong>Descrivi quadrante per quadrante:</strong> Affronta ogni sezione della bocca sistematicamente</li>
+                                        <li><strong>Spiega il trattamento:</strong> Comunica chiaramente quale trattamento viene proposto</li>
+                                        <li><strong>Motiva la scelta:</strong> Aiuta il paziente a capire perché quella cura è consigliata</li>
+                                        <li><strong>Usa la nomenclatura corretta:</strong> Fai riferimento ai termini dal preventivatore</li>
+                                    </ul>
+                                </div>
+
+                                <div class="guide-example">
+                                    <h4><i class="fas fa-clipboard"></i> Esempio:</h4>
+                                    <p>"Si consiglia di fare una ricostruzione estetica sul dente 11 per eliminare la lesione cariosa. Si consiglia di estrarre il dente 15 per motivi strutturali. Di conseguenza, si consiglia di procedere inserendo 2 impianti in posizione 14 e 17 (previa valutazione con TAC)."</p>
+                                </div>
+                            </div>
+
+                            <!-- Fase 3 -->
+                            <div class="guide-section">
+                                <h3>Fase 3: Esami Aggiuntivi e Procedure Preliminari</h3>
+                                <p><strong>Obbiettivo:</strong> Identificare eventuali approfondimenti diagnostici necessari</p>
+                                
+                                <div class="guide-subsection">
+                                    <h4>Prima di chiudere l'appuntamento, chiedi:</h4>
+                                    <ul class="guide-checklist">
+                                        <li><strong>TAC / Radiografie:</strong> Sono necessari approfondimenti radiologici?</li>
+                                        <li><strong>Esami di laboratorio:</strong> Sono necessari test specifici?</li>
+                                        <li><strong>Visite specialistiche:</strong> Sono necessari consulti con altri specialisti?</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Checklist -->
+                            <div class="guide-section guide-checklist-section">
+                                <h3><i class="fas fa-check-square"></i> Checklist dell'Appuntamento</h3>
+                                <p>Usa questa checklist durante l'appuntamento per assicurarti di non perdere informazioni importanti:</p>
+                                
+                                <div class="checklist-container">
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check1" class="guide-checkbox">
+                                        <label for="check1">Ho descritto i denti mancanti</label>
+                                    </div>
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check2" class="guide-checkbox">
+                                        <label for="check2">Ho analizzato i denti presenti per ogni quadrante</label>
+                                    </div>
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check3" class="guide-checkbox">
+                                        <label for="check3">Ho descritto la situazione generale della bocca</label>
+                                    </div>
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check4" class="guide-checkbox">
+                                        <label for="check4">Ho proposto le cure quadrante per quadrante</label>
+                                    </div>
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check5" class="guide-checkbox">
+                                        <label for="check5">Ho usato la nomenclatura corretta</label>
+                                    </div>
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check6" class="guide-checkbox">
+                                        <label for="check6">Ho spiegato chiaramente ogni cura</label>
+                                    </div>
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check7" class="guide-checkbox">
+                                        <label for="check7">Ho identificato gli esami aggiuntivi necessari</label>
+                                    </div>
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check8" class="guide-checkbox">
+                                        <label for="check8">Ho comunicato il preventivo finale</label>
+                                    </div>
+                                    <div class="checklist-item">
+                                        <input type="checkbox" id="check9" class="guide-checkbox">
+                                        <label for="check9">Ho registrato tutto nell'appuntamento</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================================ -->
+                    <!-- PROFILE PAGE -->
+                    <!-- ============================================================================ -->
+                    <div id="profilePage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <h2><i class="fas fa-user-cog"></i> Profilo Studio</h2>
+                            <p class="page-subtitle">Gestisci le informazioni del tuo studio</p>
+                        </div>
+                        
+                        <div class="profile-card">
+                            <div class="profile-section">
+                                <h3><i class="fas fa-user"></i> Profilo Utente</h3>
+                                <div class="form-group">
+                                    <label for="profileName">Nome</label>
+                                    <input type="text" id="profileName" class="input-field" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileEmail">Email</label>
+                                    <input type="email" id="profileEmail" class="input-field" readonly>
+                                </div>
+                            </div>
+
+                            <div class="profile-actions">
+                                <button id="saveProfileBtn" type="button" class="btn-primary">
+                                    <i class="fas fa-save"></i> Salva Modifiche
+                                </button>
+                                <button id="logoutBtn" type="button" class="btn-danger">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+
+                            <div id="profileStatus" class="submission-status" style="display: none;">
+                                <p id="profileStatusMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================================ -->
+                    <!-- HISTORY PAGE -->
+                    <!-- ============================================================================ -->
+                    <div id="historyPage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <h2><i class="fas fa-history"></i> Storico Registrazioni</h2>
+                            <p class="page-subtitle">Elenco di tutte le registrazioni salvate</p>
+                        </div>
+                        
+                        <div class="history-card">
+                            <div id="recordingsList" class="recordings-list">
+                                <div class="empty-state">
+                                    <i class="fas fa-hourglass-half"></i>
+                                    <p>Caricamento...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <!-- Footer Container (dinamico) -->
+            <div id="footerContainer"></div>
+        </section>
+    </div>
+
+    <!-- ============================================================================ -->
+    <!-- MODALS -->
+    <!-- ============================================================================ -->
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closePrivacyPolicy()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <button onclick="closePrivacyPolicy()" class="modal-close" type="button">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2><i class="fas fa-shield-alt"></i> Privacy Policy</h2>
+                <div class="modal-body">
+                    <h3>1. Introduzione</h3>
+                    <p>Medical AI si impegna a proteggere la tua privacy. Questa Privacy Policy spiega come raccogliamo, utilizziamo, proteggiamo e condividiamo i tuoi dati personali.</p>
+                    
+                    <h3>2. Dati Raccolti</h3>
+                    <p>Raccogliamo i seguenti dati personali durante la registrazione degli appuntamenti:</p>
+                    <ul>
+                        <li>Nome paziente</li>
+                        <li>Email paziente</li>
+                        <li>Numero di telefono</li>
+                        <li>Registrazioni audio degli appuntamenti</li>
+                        <li>Informazioni studio</li>
+                    </ul>
+                    
+                    <h3>3. Utilizzo dei Dati</h3>
+                    <p>Utilizziamo i tuoi dati per:</p>
+                    <ul>
+                        <li>Gestire gli appuntamenti</li>
+                        <li>Archiviare le registrazioni</li>
+                        <li>Comunicare con te sui tuoi appuntamenti</li>
+                        <li>Migliorare i nostri servizi</li>
+                    </ul>
+                    
+                    <h3>4. Protezione dei Dati</h3>
+                    <p>Implementiamo misure di sicurezza appropriate per proteggere i tuoi dati da accesso non autorizzato, alterazione o distruzione.</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-primary" onclick="acceptPrivacy()" type="button">
+                        <i class="fas fa-check"></i> Accetto
+                    </button>
+                    <button class="btn-secondary" onclick="closePrivacyPolicy()" type="button">
+                        <i class="fas fa-times"></i> Chiudi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms & Conditions Modal -->
+    <div id="termsModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeTermsConditions()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <button onclick="closeTermsConditions()" class="modal-close" type="button">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2><i class="fas fa-file-contract"></i> Termini e Condizioni</h2>
+                <div class="modal-body">
+                    <h3>1. Accettazione dei Termini</h3>
+                    <p>Utilizzando Medical AI, accetti di essere vincolato da questi Termini e Condizioni. Se non accetti questi termini, non utilizzare il servizio.</p>
+                    
+                    <h3>2. Descrizione del Servizio</h3>
+                    <p>Medical AI fornisce una piattaforma per la registrazione audio degli appuntamenti medici e l'archiviazione dei dati dei pazienti.</p>
+                    
+                    <h3>3. Responsabilità dell'Utente</h3>
+                    <p>L'utente è responsabile di:</p>
+                    <ul>
+                        <li>Mantenere la confidenzialità delle credenziali di accesso</li>
+                        <li>Assicurarsi di avere il consenso del paziente prima di registrare</li>
+                        <li>Conformarsi alle leggi applicabili sulla privacy</li>
+                        <li>Non utilizzare la piattaforma per scopi illegali</li>
+                    </ul>
+                    
+                    <h3>4. Limitazione di Responsabilità</h3>
+                    <p>Medical AI non è responsabile per perdite di dati, danni o interruzioni del servizio dovute a fattori oltre il nostro controllo.</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-primary" onclick="acceptTerms()" type="button">
+                        <i class="fas fa-check"></i> Accetto
+                    </button>
+                    <button class="btn-secondary" onclick="closeTermsConditions()" type="button">
+                        <i class="fas fa-times"></i> Chiudi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Patient Modal -->
+    <div id="addPatientModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Aggiungi Paziente</h2>
+                <button type="button" class="modal-close" onclick="closeAddPatientModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="addPatientForm" class="modal-body" onsubmit="handleAddPatient(event)">
+                <div class="form-group">
+                    <label for="addPatientFirstName"><i class="fas fa-user"></i> Nome</label>
+                    <input type="text" id="addPatientFirstName" class="input-field" placeholder="Mario" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="addPatientLastName"><i class="fas fa-user"></i> Cognome</label>
+                    <input type="text" id="addPatientLastName" class="input-field" placeholder="Rossi" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="addPatientEmailField"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="addPatientEmailField" class="input-field" placeholder="mario@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="addPatientPhoneField"><i class="fas fa-phone"></i> Telefono</label>
+                    <input type="tel" id="addPatientPhoneField" class="input-field" placeholder="+39 123 456 7890" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="addPatientPolicyConsent" required>
+                        <span>Accetto la 
+                            <button type="button" class="consent-link" onclick="openPrivacyPolicy(); return false;">Privacy Policy</button> 
+                            e i 
+                            <button type="button" class="consent-link" onclick="openTermsConditions(); return false;">Termini e Condizioni</button>
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeAddPatientModal()">
+                        <i class="fas fa-times"></i> Annulla
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-plus"></i> Aggiungi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Patient Modal -->
+    <div id="editPatientModal" class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-edit"></i> Modifica Paziente</h2>
+                <button type="button" class="modal-close" onclick="closeEditPatientModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="editPatientForm" class="modal-body" onsubmit="handleEditPatient(event)">
+                <input type="hidden" id="editPatientId">
+                
+                <div class="form-group">
+                    <label for="editPatientFirstName"><i class="fas fa-user"></i> Nome</label>
+                    <input type="text" id="editPatientFirstName" class="input-field" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPatientLastName"><i class="fas fa-user"></i> Cognome</label>
+                    <input type="text" id="editPatientLastName" class="input-field" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPatientEmailField"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="editPatientEmailField" class="input-field" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPatientPhoneField"><i class="fas fa-phone"></i> Telefono</label>
+                    <input type="tel" id="editPatientPhoneField" class="input-field" required>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeEditPatientModal()">
+                        <i class="fas fa-times"></i> Annulla
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Salva
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- ============================================================================ -->
+    <!-- JAVASCRIPT FILES -->
+    <!-- ============================================================================ -->
+    
+    <!-- API Layer (DEVE ESSERE PRIMA DI COMPONENTS) -->
+    <script src="js/recording-manager.js"></script>
+    <script src="js/client-api.js"></script>
+    <script src="js/patients.js"></script>
+    
+    <!-- Utilities -->
+    <script src="js/utils.js"></script>
+    <script src="js/consent.js"></script>
+    
+    <!-- Components & Main (DOPO API LAYER) -->
+    <script src="js/header.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/footer.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/components.js"></script>
+    
+    <!-- Initialization -->
+    <script>
+        // Inizializza l'app quando il DOM è caricato
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                console.log('🎯 Documento caricato - Inizio inizializzazione');
+                initializeApp();
+            } catch (error) {
+                console.error('❌ Errore durante l\'inizializzazione:', error);
+                showNotification('Errore nel caricamento dell\'applicazione', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

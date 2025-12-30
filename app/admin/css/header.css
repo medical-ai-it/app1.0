@@ -1,0 +1,323 @@
+/* ============================================================================
+   ADMIN HEADER STYLES - Medical AI
+   ============================================================================ */
+
+:root {
+    --primary-color: #0061b1;
+    --primary-light: #0073d4;
+    --primary-lighter: #e3f2fd;
+    --text-dark: #1a1a1a;
+    --text-light: #666;
+    --text-lighter: #999;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --danger-color: #f44336;
+}
+
+/* ===== APP HEADER ===== */
+.app-header {
+    background: white;
+    border-bottom: 2px solid var(--primary-lighter);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    max-width: 100%;
+}
+
+/* ===== HEADER LEFT SECTION ===== */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.header-logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* ===== ADMIN PANEL BADGE ===== */
+.admin-panel-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #EF5350 0%, #F44336 100%);
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9em;
+    box-shadow: 0 2px 8px rgba(239, 83, 80, 0.3);
+}
+
+.admin-panel-badge i {
+    font-size: 1.1em;
+}
+
+/* ===== HEADER DIVIDER ===== */
+.header-divider {
+    width: 1px;
+    height: 30px;
+    background: var(--border-color);
+}
+
+.header-divider-vertical {
+    width: 1px;
+    height: 40px;
+    background: var(--border-color);
+}
+
+/* ===== ADMIN INFO ===== */
+.admin-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.admin-label {
+    font-size: 0.75em;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-version {
+    font-size: 0.7em;
+    color: var(--text-lighter);
+    font-weight: 500;
+}
+
+/* ===== HEADER RIGHT SECTION ===== */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-end;
+}
+
+/* ===== HEADER STATS ===== */
+.header-stats {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.stat-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: var(--primary-lighter);
+    border: 1px solid rgba(0, 97, 177, 0.2);
+    border-radius: 8px;
+    text-align: center;
+    min-width: 70px;
+}
+
+.stat-badge i {
+    font-size: 1.2em;
+    color: var(--primary-color);
+}
+
+.stat-badge span {
+    font-size: 0.9em;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.stat-badge label {
+    font-size: 0.65em;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin: 0;
+}
+
+/* ===== HEADER USER INFO ===== */
+.header-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: var(--primary-lighter);
+    border-radius: 8px;
+    border: 1px solid var(--primary-light);
+}
+
+.user-label {
+    font-size: 0.85em;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.user-email {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9em;
+}
+
+/* ===== LOGOUT BUTTON ===== */
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid var(--danger-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--danger-color);
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background: var(--danger-color);
+    color: white;
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-logout:active {
+    transform: scale(0.98);
+}
+
+.btn-logout i {
+    font-size: 1.1em;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+    .header-content {
+        padding: 15px 30px;
+        gap: 15px;
+    }
+
+    .header-left {
+        gap: 15px;
+    }
+
+    .header-right {
+        gap: 15px;
+    }
+
+    .header-stats {
+        gap: 10px;
+    }
+
+    .stat-badge {
+        min-width: 65px;
+        padding: 6px 10px;
+    }
+
+    .stat-badge span {
+        font-size: 0.85em;
+    }
+
+    .stat-badge label {
+        font-size: 0.6em;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        padding: 12px 20px;
+        gap: 10px;
+    }
+
+    .header-left {
+        flex: 1;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .header-logo {
+        height: 40px;
+    }
+
+    .admin-panel-badge {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
+    .admin-panel-badge span {
+        display: none;
+    }
+
+    .header-right {
+        gap: 10px;
+        flex: 0 0 auto;
+    }
+
+    .header-stats {
+        display: none;
+    }
+
+    .header-divider-vertical {
+        display: none;
+    }
+
+    .header-user-info {
+        display: none;
+    }
+
+    .btn-logout {
+        padding: 8px 12px;
+        font-size: 0.85em;
+    }
+
+    .btn-logout span {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content {
+        padding: 10px 15px;
+    }
+
+    .header-left {
+        gap: 8px;
+    }
+
+    .header-logo {
+        height: 35px;
+    }
+
+    .admin-panel-badge {
+        padding: 5px 10px;
+        font-size: 0.75em;
+    }
+
+    .admin-info {
+        display: none;
+    }
+
+    .header-divider {
+        display: none;
+    }
+
+    .btn-logout {
+        padding: 6px 10px;
+        font-size: 0.8em;
+    }
+
+    .btn-logout i {
+        font-size: 0.9em;
+    }
+}

@@ -1,0 +1,129 @@
+<aside class="app-sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-brand">
+            <i class="fas fa-shield-alt"></i>
+            <span>Admin Control</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <!-- Gestione Section -->
+        <div class="sidebar-menu">
+            <h3 class="sidebar-menu-title">
+                <i class="fas fa-cogs"></i>
+                Gestione Principale
+            </h3>
+            <ul class="sidebar-menu-list">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link active" onclick="navigateAdminTo('studios'); return false;" title="Gestione Studio">
+                        <i class="fas fa-hospital"></i>
+                        <span class="sidebar-text">Studio</span>
+                        <span class="sidebar-badge" id="studioBadge">0</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" onclick="navigateAdminTo('users'); return false;" title="Gestione Utenti">
+                        <i class="fas fa-users"></i>
+                        <span class="sidebar-text">Utenti</span>
+                        <span class="sidebar-badge" id="userBadge">0</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" onclick="navigateAdminTo('analytics'); return false;" title="Analytics Dashboard">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="sidebar-text">Analytics</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Amministrazione Section -->
+        <div class="sidebar-menu">
+            <h3 class="sidebar-menu-title">
+                <i class="fas fa-sliders-h"></i>
+                Amministrazione
+            </h3>
+            <ul class="sidebar-menu-list">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" onclick="navigateAdminTo('team'); return false;" title="Gestione Team">
+                        <i class="fas fa-user-tie"></i>
+                        <span class="sidebar-text">Team Admin</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" onclick="navigateAdminTo('profile'); return false;" title="Profilo Amministratore">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="sidebar-text">Profilo</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" onclick="navigateAdminTo('settings'); return false;" title="Impostazioni">
+                        <i class="fas fa-cog"></i>
+                        <span class="sidebar-text">Impostazioni</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Supporto Section -->
+        <div class="sidebar-menu">
+            <h3 class="sidebar-menu-title">
+                <i class="fas fa-question-circle"></i>
+                Supporto & Risorse
+            </h3>
+            <ul class="sidebar-menu-list">
+                <li class="sidebar-item">
+                    <a href="https://docs.medical-ai.it" target="_blank" rel="noopener noreferrer" class="sidebar-link" title="Documentazione API">
+                        <i class="fas fa-book"></i>
+                        <span class="sidebar-text">Documentazione</span>
+                        <i class="fas fa-external-link-alt sidebar-external"></i>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="https://support.medical-ai.it" target="_blank" rel="noopener noreferrer" class="sidebar-link" title="Centro Supporto">
+                        <i class="fas fa-life-ring"></i>
+                        <span class="sidebar-text">Supporto</span>
+                        <i class="fas fa-external-link-alt sidebar-external"></i>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="https://status.medical-ai.it" target="_blank" rel="noopener noreferrer" class="sidebar-link" title="Status Server">
+                        <i class="fas fa-heartbeat"></i>
+                        <span class="sidebar-text">Status Server</span>
+                        <i class="fas fa-external-link-alt sidebar-external"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Info Section -->
+        <div class="sidebar-menu">
+            <h3 class="sidebar-menu-title">
+                <i class="fas fa-info-circle"></i>
+                Informazioni
+            </h3>
+            <ul class="sidebar-menu-list">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link sidebar-disabled" title="Versione">
+                        <i class="fas fa-cube"></i>
+                        <span class="sidebar-text">Versione</span>
+                        <span class="sidebar-version">v1.0</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link sidebar-disabled" title="Ambiente">
+                        <i class="fas fa-server"></i>
+                        <span class="sidebar-text">Ambiente</span>
+                        <span class="sidebar-env" id="sidebarEnv">Production</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button class="sidebar-collapse-btn" title="Comprimi Sidebar">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+    </div>
+</aside>

@@ -1,0 +1,869 @@
+/* ============================================================================
+   REFERTO PAGE STYLES - Medical AI
+   ============================================================================ */
+
+:root {
+    --primary-color: #0061b1;
+    --primary-light: #0073d4;
+    --primary-lighter: #e3f2fd;
+    --danger-color: #EF5350;
+    --danger-dark: #E53935;
+    --text-dark: #1a1a1a;
+    --text-color: #333;
+    --text-light: #666;
+    --bg-white: #ffffff;
+    --bg-light: #f5f5f5;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #f9f9f9;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.referto-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg-white);
+}
+
+.referto-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+.referto-main {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    background: var(--bg-white);
+}
+
+.referto-content {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* ===== PAGE HEADER WITH ACTIONS ===== */
+.page-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.page-header h2 {
+    color: var(--text-dark);
+    margin: 0;
+    font-size: 1.8em;
+    flex: 1;
+    font-weight: 700;
+}
+
+/* ===== REFERTO HEADER INFO ===== */
+.referto-header {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%);
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #b3e5fc;
+}
+
+.referto-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-item label {
+    font-weight: 700;
+    color: #0061b1;
+    font-size: 0.95em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item span {
+    color: var(--text-dark);
+    font-size: 1.05em;
+    font-weight: 500;
+}
+
+/* ===== REFERTO ACTIONS BUTTONS ===== */
+.referto-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.btn-referto {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    white-space: nowrap;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-referto i {
+    font-size: 1.1em;
+}
+
+.btn-primary-color {
+    background: linear-gradient(135deg, #0061b1 0%, #0073d4 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 97, 177, 0.15);
+}
+
+.btn-primary-color:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 97, 177, 0.25);
+    background: linear-gradient(135deg, #004a8a 0%, #0061b1 100%);
+}
+
+.btn-primary-color:active {
+    transform: translateY(0);
+}
+
+.btn-danger-color {
+    background: linear-gradient(135deg, #EF5350 0%, #E53935 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 83, 80, 0.15);
+}
+
+.btn-danger-color:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(239, 83, 80, 0.25);
+    background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+}
+
+.btn-danger-color:active {
+    transform: translateY(0);
+}
+
+.btn-referto:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ===== CONFIRMATION DIALOG ===== */
+.confirmation-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.confirmation-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    text-align: center;
+    animation: slideUp 0.3s ease-out;
+}
+
+.confirmation-content h3 {
+    color: var(--text-dark);
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.confirmation-content p {
+    color: var(--text-light);
+    margin-bottom: 25px;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+.confirmation-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* ===== REFERTO CARD ===== */
+.referto-card {
+    background: var(--bg-white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 30px;
+}
+
+.referto-card h3 {
+    color: var(--text-dark);
+    margin: 0 0 25px 0;
+    font-weight: 700;
+    font-size: 1.4em;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #0061b1;
+}
+
+/* ===== ODONTOGRAMMA SECTION ===== */
+.odontogramma-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.odontogramma-container {
+    background: var(--bg-light);
+    padding: 25px;
+    border-radius: 8px;
+    overflow-x: auto;
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+}
+
+.tooth {
+    fill: #f5f5f5;
+    stroke: #999;
+    stroke-width: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tooth:hover {
+    stroke-width: 2;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    opacity: 0.9;
+}
+
+/* Colori denti per diverse procedure */
+.tooth.extract {
+    fill: #2196F3;
+    stroke: #1976D2;
+}
+
+.tooth.conservativa {
+    fill: #FFC107;
+    stroke: #F57F17;
+}
+
+.tooth.endodonzia {
+    fill: #F44336;
+    stroke: #D32F2F;
+}
+
+.tooth.impianto {
+    fill: #4CAF50;
+    stroke: #2E7D32;
+}
+
+.tooth.extract-impianto {
+    fill: #9C27B0;
+    stroke: #6A1B9A;
+}
+
+.tooth.endodonzia-corona {
+    fill: #FF9800;
+    stroke: #E65100;
+}
+
+/* ===== ODONTOGRAMMA LEGEND ===== */
+.odontogramma-legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    background: #e3f2fd;
+    border-radius: 8px;
+    border: 1px solid #90caf9;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.legend-color {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    border: 1px solid #666;
+    flex-shrink: 0;
+}
+
+.legend-item span {
+    font-size: 0.9em;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* ===== REFERTO TEXT SECTION ===== */
+.referto-text-section {
+    background: var(--bg-white);
+    padding: 40px;
+}
+
+.referto-subsection {
+    margin-bottom: 40px;
+    padding-bottom: 35px;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+.referto-subsection:last-of-type {
+    border-bottom: none;
+}
+
+.referto-subsection h4 {
+    color: #0061b1;
+    font-size: 1.25em;
+    margin: 0 0 18px 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+.referto-text {
+    line-height: 1.85;
+    color: var(--text-color);
+    font-size: 0.98em;
+    text-align: justify;
+}
+
+.referto-text p {
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+.referto-text p:first-child {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 12px;
+}
+
+.referto-text ul {
+    margin: 15px 0;
+    padding-left: 30px;
+    list-style: none;
+}
+
+.referto-text li {
+    margin-bottom: 12px;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.6;
+}
+
+.referto-text li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #0061b1;
+    font-weight: 700;
+    font-size: 1.2em;
+}
+
+.referto-text strong {
+    color: #0061b1;
+    font-weight: 700;
+}
+
+/* ===== REFERTO SIGNATURE ===== */
+.referto-signature {
+    margin-top: 50px;
+    padding-top: 40px;
+    border-top: 3px solid #0061b1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.referto-signature p {
+    margin: 8px 0;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.referto-signature p:first-child {
+    font-weight: 700;
+    font-size: 1.05em;
+    color: var(--text-dark);
+}
+
+.referto-signature p:nth-child(2) {
+    margin-top: 50px;
+    font-size: 1.2em;
+    letter-spacing: 3px;
+}
+
+.referto-signature p:last-child {
+    font-size: 0.9em;
+    color: var(--text-light);
+    margin-top: 10px;
+}
+
+/* ===== TOAST NOTIFICATIONS ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+}
+
+.notification.notification-success {
+    background: linear-gradient(135deg, #26A69A 0%, #009688 100%);
+    color: white;
+}
+
+.notification.notification-error {
+    background: linear-gradient(135deg, #EF5350 0%, #E53935 100%);
+    color: white;
+}
+
+.notification.notification-info {
+    background: linear-gradient(135deg, #0061b1 0%, #0073d4 100%);
+    color: white;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    body {
+        background: white;
+    }
+
+    .referto-container {
+        background: white;
+    }
+
+    .referto-wrapper {
+        display: block;
+    }
+
+    .referto-main {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .referto-actions {
+        display: none !important;
+    }
+
+    #headerContainer,
+    #sidebarContainer,
+    #footerContainer {
+        display: none;
+    }
+
+    .page-header {
+        border-bottom: none;
+        margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+        font-size: 1.5em;
+    }
+
+    .referto-header {
+        background: white;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+
+    .referto-card {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .referto-subsection {
+        page-break-inside: avoid;
+    }
+
+    .referto-signature {
+        page-break-inside: avoid;
+    }
+
+    .odontogramma-container {
+        background: white;
+    }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+    .referto-main {
+        padding: 30px;
+    }
+
+    .header-top {
+        flex-direction: column;
+    }
+
+    .referto-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .referto-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .odontogramma-legend {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .referto-card {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .referto-main {
+        padding: 20px;
+    }
+
+    .referto-card {
+        padding: 20px;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .referto-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-referto {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .referto-info {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .odontogramma-legend {
+        grid-template-columns: 1fr;
+    }
+
+    .odontogramma-container {
+        min-height: 280px;
+    }
+
+    .referto-text-section {
+        padding: 20px;
+    }
+
+    .referto-subsection h4 {
+        font-size: 1.1em;
+    }
+
+    .confirmation-content {
+        max-width: 90%;
+        margin: 20px;
+    }
+
+    .referto-signature {
+        margin-top: 40px;
+        padding-top: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .referto-main {
+        padding: 15px;
+    }
+
+    .referto-card {
+        padding: 15px;
+    }
+
+    .referto-card h3 {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+    }
+
+    .page-header h2 {
+        font-size: 1.4em;
+    }
+
+    .referto-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-referto {
+        padding: 10px 14px;
+        font-size: 0.9em;
+    }
+
+    .btn-referto span {
+        display: none;
+    }
+
+    .btn-referto i {
+        font-size: 1.3em;
+    }
+
+    .referto-info {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .info-item label {
+        font-size: 0.85em;
+    }
+
+    .info-item span {
+        font-size: 0.95em;
+    }
+
+    .odontogramma-container {
+        padding: 10px;
+        min-height: 240px;
+    }
+
+    .odontogramma-legend {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .legend-item {
+        font-size: 0.85em;
+    }
+
+    .legend-color {
+        width: 25px;
+        height: 25px;
+    }
+
+    .referto-text {
+        font-size: 0.9em;
+        line-height: 1.7;
+    }
+
+    .referto-text p {
+        margin-bottom: 10px;
+    }
+
+    .referto-text li {
+        margin-bottom: 10px;
+        padding-left: 18px;
+    }
+
+    .referto-subsection {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+    }
+
+    .referto-subsection h4 {
+        font-size: 1em;
+        margin-bottom: 12px;
+    }
+
+    .referto-signature {
+        margin-top: 30px;
+        padding-top: 20px;
+    }
+
+    .referto-signature p:nth-child(2) {
+        margin-top: 40px;
+        font-size: 1em;
+    }
+
+    .confirmation-content {
+        padding: 20px;
+    }
+
+    .confirmation-buttons {
+        flex-direction: column;
+    }
+
+    .confirmation-buttons .btn-referto {
+        width: 100%;
+    }
+
+    .notification {
+        right: 10px;
+        left: 10px;
+        top: 10px;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ===== LOADING SPINNER ===== */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { width: 30%; }
+    50% { width: 80%; }
+}
+
+.referto-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 30px;
+    padding: 40px;
+}
+
+.referto-loading > div:first-child {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0061b1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.referto-loading > div:nth-child(2) {
+    text-align: center;
+}
+
+.referto-loading h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #0061b1;
+}
+
+.referto-loading p {
+    color: #666;
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.referto-loading > div:last-child {
+    width: 100%;
+    max-width: 300px;
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.referto-loading > div:last-child > div {
+    height: 100%;
+    background: linear-gradient(90deg, #0061b1, #00a8e8);
+    width: 30%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ===== ERROR STATE ===== */
+.referto-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: 40px;
+    text-align: center;
+}
+
+.referto-error > div:first-child {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+.referto-error h2 {
+    font-size: 24px;
+    color: #d32f2f;
+    margin-bottom: 15px;
+}
+
+.referto-error p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 30px;
+    max-width: 500px;
+}

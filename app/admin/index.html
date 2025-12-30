@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Medical AI - Admin Panel per la gestione della piattaforma di registrazione audio dentistica">
+    <meta name="theme-color" content="#0061b1">
+    <title>Medical AI - Admin Panel</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/admin.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://medical-ai.it/assets/images/favicon.ico">
+</head>
+<body>
+    <script>
+        // ✅ VERIFICA SESSIONE IMMEDIATAMENTE
+        const session = JSON.parse(localStorage.getItem('userSession') || '{}');
+        
+        const isAdmin = window.location.pathname.includes('/admin/');
+        const isClient = window.location.pathname.includes('/client/');
+        
+        if (!session || !session.userId) {
+            console.log('❌ No session - redirecting to login');
+            window.location.replace('../login/index.html');
+        } else if (isAdmin && session.userType !== 'admin') {
+            console.log('❌ Not admin - redirecting to login');
+            window.location.replace('../login/index.html');
+        } else if (isClient && session.userType !== 'studio') {
+            console.log('❌ Not studio - redirecting to login');
+            window.location.replace('../login/index.html');
+        } else {
+            console.log('✅ Session valid:', session.email);
+        }
+    </script>
+    <div id="app">
+        <!-- Admin Dashboard Section -->
+        <section id="adminDashboardSection" class="dashboard-container" style="display: none;">
+            <!-- Header Container -->
+            <div id="adminHeaderContainer"></div>
+            
+            <!-- Main Dashboard Wrapper -->
+            <div class="dashboard-wrapper">
+                <!-- Sidebar Container -->
+                <div id="adminSidebarContainer"></div>
+                
+                <!-- Main Content Area -->
+                <main class="dashboard-main">
+                    <!-- Studios Management Page -->
+                    <div id="studiosPage" class="page-content">
+                        <div class="page-header">
+                            <div class="page-header-content">
+                                <div class="page-title-section">
+                                    <h1 class="page-title">
+                                        <i class="fas fa-hospital"></i>
+                                        Gestione Studio
+                                    </h1>
+                                    <p class="page-subtitle">Gestisci tutti gli studi dentistici collegati</p>
+                                </div>
+                                <button id="newStudioBtn" class="btn-primary btn-lg">
+                                    <i class="fas fa-plus"></i>
+                                    Nuovo Studio
+                                </button>
+                            </div>
+                        </div>
+                        <div class="studios-grid" id="studiosGrid">
+                            <div class="empty-state">
+                                <i class="fas fa-hospital"></i>
+                                <p>Nessuno studio disponibile</p>
+                                <small>Crea il primo studio per iniziare</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Studio Detail Page -->
+                    <div id="studioDetailPage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <button id="backToStudiosBtn" class="btn-back">
+                                <i class="fas fa-arrow-left"></i>
+                                Torna ai Studio
+                            </button>
+                            <h1 id="studioDetailTitle" class="page-title">
+                                <i class="fas fa-hospital"></i>
+                                Dettagli Studio
+                            </h1>
+                        </div>
+                        
+                        <div class="studio-detail-container">
+                            <!-- Detail Tabs -->
+                            <div class="detail-tabs">
+                                <button class="detail-tab active" data-tab="overview">
+                                    <i class="fas fa-chart-pie"></i>
+                                    Overview
+                                </button>
+                                <button class="detail-tab" data-tab="recordings">
+                                    <i class="fas fa-microphone"></i>
+                                    Registrazioni
+                                </button>
+                                <button class="detail-tab" data-tab="settings">
+                                    <i class="fas fa-cog"></i>
+                                    Impostazioni
+                                </button>
+                            </div>
+
+                            <!-- Tabs Content -->
+                            <div class="tabs-content">
+                                <!-- Overview Tab -->
+                                <div id="overviewTab" class="tab-pane active">
+                                    <div class="stats-grid">
+                                        <div class="stat-card">
+                                            <div class="stat-icon">
+                                                <i class="fas fa-microphone"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <p class="stat-label">Registrazioni Totali</p>
+                                                <p class="stat-value" id="totalRecordings">0</p>
+                                            </div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="stat-icon">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <p class="stat-label">Pazienti Unici</p>
+                                                <p class="stat-value" id="uniquePatients">0</p>
+                                            </div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="stat-icon">
+                                                <i class="fas fa-clock"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <p class="stat-label">Ore Registrate</p>
+                                                <p class="stat-value" id="totalHours">0h</p>
+                                            </div>
+                                        </div>
+                                        <div class="stat-card">
+                                            <div class="stat-icon">
+                                                <i class="fas fa-calendar"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <p class="stat-label">Data Creazione</p>
+                                                <p class="stat-value" id="createdDate">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="studio-info-box">
+                                        <div class="info-box-header">
+                                            <h3>
+                                                <i class="fas fa-info-circle"></i>
+                                                Informazioni Studio
+                                            </h3>
+                                        </div>
+                                        <div class="info-grid">
+                                            <div class="info-item">
+                                                <label>
+                                                    <i class="fas fa-hospital"></i>
+                                                    Nome:
+                                                </label>
+                                                <p id="infoStudioName">-</p>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>
+                                                    <i class="fas fa-envelope"></i>
+                                                    Email:
+                                                </label>
+                                                <p id="infoStudioEmail">-</p>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>
+                                                    <i class="fas fa-phone"></i>
+                                                    Telefono:
+                                                </label>
+                                                <p id="infoStudioPhone">-</p>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>
+                                                    <i class="fas fa-circle"></i>
+                                                    Status:
+                                                </label>
+                                                <p id="infoStudioStatus">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recordings Tab -->
+                                <div id="recordingsTab" class="tab-pane">
+                                    <div id="studioRecordingsList" class="recordings-list">
+                                        <div class="empty-state">
+                                            <i class="fas fa-microphone"></i>
+                                            <p>Nessuna registrazione</p>
+                                            <small>Le registrazioni dello studio appariranno qui</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Settings Tab -->
+                                <div id="settingsTab" class="tab-pane">
+                                    <div class="settings-section">
+                                        <div class="settings-header">
+                                            <h3>
+                                                <i class="fas fa-cog"></i>
+                                                Impostazioni Studio
+                                            </h3>
+                                        </div>
+                                        <div class="settings-form">
+                                            <div class="form-group">
+                                                <label for="editStudioName">
+                                                    <i class="fas fa-hospital"></i>
+                                                    Nome Studio:
+                                                </label>
+                                                <input type="text" id="editStudioName" class="input-field" placeholder="Nome Studio">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="editStudioEmail">
+                                                    <i class="fas fa-envelope"></i>
+                                                    Email:
+                                                </label>
+                                                <input type="email" id="editStudioEmail" class="input-field" placeholder="email@studio.it">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="editStudioPhone">
+                                                    <i class="fas fa-phone"></i>
+                                                    Telefono:
+                                                </label>
+                                                <input type="tel" id="editStudioPhone" class="input-field" placeholder="+39 123 456 789">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="editStudioStatus">
+                                                    <i class="fas fa-toggle-on"></i>
+                                                    Status:
+                                                </label>
+                                                <select id="editStudioStatus" class="input-field">
+                                                    <option value="attivo">Attivo</option>
+                                                    <option value="inattivo">Inattivo</option>
+                                                    <option value="sospeso">Sospeso</option>
+                                                </select>
+                                            </div>
+                                            <div class="settings-actions">
+                                                <button id="saveStudioBtn" class="btn-primary">
+                                                    <i class="fas fa-save"></i>
+                                                    Salva Modifiche
+                                                </button>
+                                                <button id="deleteStudioBtn" class="btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                    Elimina Studio
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Management Page -->
+                    <div id="usersPage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <div class="page-header-content">
+                                <div class="page-title-section">
+                                    <h1 class="page-title">
+                                        <i class="fas fa-users"></i>
+                                        Gestione Utenti
+                                    </h1>
+                                    <p class="page-subtitle">Gestisci gli utenti della piattaforma</p>
+                                </div>
+                                <button id="newUserBtn" class="btn-primary btn-lg">
+                                    <i class="fas fa-plus"></i>
+                                    Nuovo Utente
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="users-table-container">
+                            <table class="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Studio</th>
+                                        <th>Ruolo</th>
+                                        <th>Status</th>
+                                        <th>Reg./Mese</th>
+                                        <th>Minuti</th>
+                                        <th>Data Creazione</th>
+                                        <th>Azioni</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <tr>
+                                        <td colspan="8" class="empty-state-table">
+                                            <i class="fas fa-users"></i>
+                                            <span>Nessun utente disponibile</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Page -->
+                    <div id="analyticsPage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <h1 class="page-title">
+                                <i class="fas fa-chart-line"></i>
+                                Analytics Dashboard
+                            </h1>
+                            <p class="page-subtitle">Visualizza statistiche e metriche della piattaforma</p>
+                        </div>
+                        
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <div class="analytics-header">
+                                    <div class="analytics-icon">
+                                        <i class="fas fa-hospital"></i>
+                                    </div>
+                                    <h3>Studio Totali</h3>
+                                </div>
+                                <p class="analytics-value" id="totalStudios">0</p>
+                                <p class="analytics-change">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Attivi
+                                </p>
+                            </div>
+                            <div class="analytics-card">
+                                <div class="analytics-header">
+                                    <div class="analytics-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <h3>Utenti Totali</h3>
+                                </div>
+                                <p class="analytics-value" id="totalUsers">0</p>
+                                <p class="analytics-change">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Registrati
+                                </p>
+                            </div>
+                            <div class="analytics-card">
+                                <div class="analytics-header">
+                                    <div class="analytics-icon">
+                                        <i class="fas fa-microphone"></i>
+                                    </div>
+                                    <h3>Registrazioni Totali</h3>
+                                </div>
+                                <p class="analytics-value" id="analyticsRecordings">0</p>
+                                <p class="analytics-change">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Completate
+                                </p>
+                            </div>
+                            <div class="analytics-card">
+                                <div class="analytics-header">
+                                    <div class="analytics-icon">
+                                        <i class="fas fa-database"></i>
+                                    </div>
+                                    <h3>Spazio Utilizzato</h3>
+                                </div>
+                                <p class="analytics-value" id="storageUsed">0 GB</p>
+                                <p class="analytics-change">
+                                    <i class="fas fa-info-circle"></i>
+                                    Storage
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Analytics Charts Section -->
+                        <div class="analytics-charts">
+                            <div class="chart-container">
+                                <h3>Registrazioni per Mese</h3>
+                                <div id="recordingsChart" class="chart-placeholder">
+                                    <p>Grafico in caricamento...</p>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <h3>Utilizzo Studio</h3>
+                                <div id="studiosChart" class="chart-placeholder">
+                                    <p>Grafico in caricamento...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Page -->
+                    <div id="profilePage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <h1 class="page-title">
+                                <i class="fas fa-user-circle"></i>
+                                Profilo Amministratore
+                            </h1>
+                            <p class="page-subtitle">Gestisci le tue informazioni personali</p>
+                        </div>
+
+                        <div class="profile-container">
+                            <div class="profile-card">
+                                <div class="profile-card-header">
+                                    <h3>
+                                        <i class="fas fa-info-circle"></i>
+                                        Informazioni Personali
+                                    </h3>
+                                </div>
+                                <div class="profile-form">
+                                    <div class="form-group">
+                                        <label for="profileName">
+                                            <i class="fas fa-user"></i>
+                                            Nome Completo:
+                                        </label>
+                                        <input type="text" id="profileName" class="input-field" placeholder="Nome Cognome">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profileEmail">
+                                            <i class="fas fa-envelope"></i>
+                                            Email:
+                                        </label>
+                                        <input type="email" id="profileEmail" class="input-field" placeholder="admin@medical-ai.it">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-card">
+                                <div class="profile-card-header">
+                                    <h3>
+                                        <i class="fas fa-lock"></i>
+                                        Cambio Password
+                                    </h3>
+                                </div>
+                                <div class="profile-form">
+                                    <div class="form-group">
+                                        <label for="profilePassword">
+                                            <i class="fas fa-key"></i>
+                                            Password Attuale:
+                                        </label>
+                                        <input type="password" id="profilePassword" class="input-field" placeholder="Password attuale">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profileNewPassword">
+                                            <i class="fas fa-key"></i>
+                                            Nuova Password:
+                                        </label>
+                                        <input type="password" id="profileNewPassword" class="input-field" placeholder="Lascia vuoto per non cambiare">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profileConfirmPassword">
+                                            <i class="fas fa-key"></i>
+                                            Conferma Password:
+                                        </label>
+                                        <input type="password" id="profileConfirmPassword" class="input-field" placeholder="Conferma nuova password">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-actions">
+                                <button id="saveProfileBtn" class="btn-primary btn-lg">
+                                    <i class="fas fa-save"></i>
+                                    Salva Modifiche
+                                </button>
+                                <button id="resetProfileBtn" class="btn-secondary btn-lg">
+                                    <i class="fas fa-undo"></i>
+                                    Annulla
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Management Page -->
+                    <div id="teamPage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <div class="page-header-content">
+                                <div class="page-title-section">
+                                    <h1 class="page-title">
+                                        <i class="fas fa-user-tie"></i>
+                                        Gestione Team
+                                    </h1>
+                                    <p class="page-subtitle">Gestisci gli amministratori della piattaforma</p>
+                                </div>
+                                <button id="newAdminBtn" class="btn-primary btn-lg">
+                                    <i class="fas fa-plus"></i>
+                                    Aggiungi Amministratore
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="team-container">
+                            <div class="team-table-container">
+                                <table class="team-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Email</th>
+                                            <th>Ruolo</th>
+                                            <th>Status</th>
+                                            <th>Data Creazione</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="teamTableBody">
+                                        <tr>
+                                            <td colspan="6" class="empty-state-table">
+                                                <i class="fas fa-user-tie"></i>
+                                                <span>Nessun amministratore disponibile</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Page -->
+                    <div id="settingsPage" class="page-content" style="display: none;">
+                        <div class="page-header">
+                            <h1 class="page-title">
+                                <i class="fas fa-cog"></i>
+                                Impostazioni Generali
+                            </h1>
+                            <p class="page-subtitle">Configura le impostazioni della piattaforma</p>
+                        </div>
+
+                        <div class="settings-container">
+                            <div class="settings-card">
+                                <div class="settings-card-header">
+                                    <h3>
+                                        <i class="fas fa-bell"></i>
+                                        Notifiche
+                                    </h3>
+                                </div>
+                                <div class="settings-options">
+                                    <div class="setting-item">
+                                        <label for="notifyEmail" class="setting-label">
+                                            <input type="checkbox" id="notifyEmail" checked>
+                                            <span>Notifiche Email</span>
+                                        </label>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label for="notifySystem" class="setting-label">
+                                            <input type="checkbox" id="notifySystem" checked>
+                                            <span>Notifiche Sistema</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <div class="settings-card-header">
+                                    <h3>
+                                        <i class="fas fa-palette"></i>
+                                        Tema
+                                    </h3>
+                                </div>
+                                <div class="settings-options">
+                                    <div class="setting-item">
+                                        <label class="setting-label">
+                                            <input type="radio" name="theme" value="light" checked>
+                                            <span>Tema Chiaro</span>
+                                        </label>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label class="setting-label">
+                                            <input type="radio" name="theme" value="dark">
+                                            <span>Tema Scuro</span>
+                                        </label>
+                                    </div>
+                                    <div class="setting-item">
+                                        <label class="setting-label">
+                                            <input type="radio" name="theme" value="auto">
+                                            <span>Auto</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-card">
+                                <div class="settings-card-header">
+                                    <h3>
+                                        <i class="fas fa-shield-alt"></i>
+                                        Sicurezza
+                                    </h3>
+                                </div>
+                                <div class="settings-options">
+                                    <button class="btn-secondary">
+                                        <i class="fas fa-key"></i>
+                                        Abilita 2FA
+                                    </button>
+                                    <button class="btn-secondary">
+                                        <i class="fas fa-history"></i>
+                                        Visualizza Log Accessi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <!-- Footer Container -->
+            <div id="adminFooterContainer"></div>
+        </section>
+    </div>
+
+    <!-- Modal: Nuovo Studio -->
+<div id="newStudioModal" class="modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeModal('newStudioModal')"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-hospital"></i>
+                Crea Nuovo Studio
+            </h2>
+            <button class="modal-close" onclick="closeModal('newStudioModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-section">
+                <h3>Informazioni Studio</h3>
+                <div class="form-group">
+                    <label for="modalStudioName">
+                        <i class="fas fa-hospital"></i>
+                        Nome Studio:
+                    </label>
+                    <input type="text" id="modalStudioName" class="input-field" placeholder="Nome Studio">
+                </div>
+                <div class="form-group">
+                    <label for="modalStudioEmail">
+                        <i class="fas fa-envelope"></i>
+                        Email:
+                    </label>
+                    <input type="email" id="modalStudioEmail" class="input-field" placeholder="email@studio.it">
+                </div>
+                <div class="form-group">
+                    <label for="modalStudioPhone">
+                        <i class="fas fa-phone"></i>
+                        Telefono:
+                    </label>
+                    <input type="tel" id="modalStudioPhone" class="input-field" placeholder="+39 123 456 789">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Amministratore dello Studio</h3>
+                <div class="form-group">
+                    <label for="modalStudioAdminEmail">
+                        <i class="fas fa-user"></i>
+                        Email Admin:
+                    </label>
+                    <input type="email" id="modalStudioAdminEmail" class="input-field" placeholder="admin@studio.it">
+                </div>
+                <div class="form-group">
+                    <label for="modalStudioAdminPassword">
+                        <i class="fas fa-lock"></i>
+                        Password Admin:
+                    </label>
+                    <input type="password" id="modalStudioAdminPassword" class="input-field" placeholder="Password sicura">
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button id="cancelNewStudioBtn" class="btn-secondary" onclick="closeModal('newStudioModal')">
+                <i class="fas fa-times"></i>
+                Annulla
+            </button>
+            <button id="createStudioBtn" class="btn-primary">
+                <i class="fas fa-check"></i>
+                Crea Studio
+            </button>
+        </div>
+    </div>
+</div>
+
+    <!-- Modal: Nuovo Amministratore -->
+<div id="newAdminModal" class="modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeModal('newAdminModal')"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-user-tie"></i>
+                Aggiungi Amministratore
+            </h2>
+            <button class="modal-close" onclick="closeModal('newAdminModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="newAdminName">
+                    <i class="fas fa-user"></i>
+                    Nome Completo:
+                </label>
+                <input type="text" id="newAdminName" class="input-field" placeholder="Nome Cognome">
+            </div>
+            <div class="form-group">
+                <label for="newAdminEmail">
+                    <i class="fas fa-envelope"></i>
+                    Email:
+                </label>
+                <input type="email" id="newAdminEmail" class="input-field" placeholder="admin@medical-ai.it">
+            </div>
+            <div class="form-group">
+                <label for="newAdminPassword">
+                    <i class="fas fa-lock"></i>
+                    Password:
+                </label>
+                <input type="password" id="newAdminPassword" class="input-field" placeholder="Password sicura">
+            </div>
+            <div class="form-group">
+                <label for="newAdminRole">
+                    <i class="fas fa-shield-alt"></i>
+                    Ruolo:
+                </label>
+                <select id="newAdminRole" class="input-field">
+                    <option value="super_admin">Super Amministratore</option>
+                    <option value="admin">Amministratore</option>
+                    <option value="moderator">Moderatore</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button id="cancelNewAdminBtn" class="btn-secondary" onclick="closeModal('newAdminModal')">
+                <i class="fas fa-times"></i>
+                Annulla
+            </button>
+            <button id="createAdminBtn" class="btn-primary">
+                <i class="fas fa-check"></i>
+                Crea Amministratore
+            </button>
+        </div>
+    </div>
+</div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Caricamento in corso...</p>
+    </div>
+
+    <!-- JavaScript Files - Correct Loading Order -->
+
+    <!-- API Layer -->
+<script src="js/admin-patients-api.js"></script>
+
+    <script src="js/utils.js"></script>
+    <script src="js/admin-utils.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/footer.js"></script>
+    <script src="js/backend-config.js"></script>
+    <script src="js/admin-manager.js"></script>
+    <script src="js/admin.js"></script>
+    
+    <!-- Initialization Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Inizializzazione Medical AI Admin Panel');
+            
+            // Mostra dashboard section
+            const adminDashboardSection = document.getElementById('adminDashboardSection');
+            if (adminDashboardSection) {
+                adminDashboardSection.style.display = 'block';
+            }
+            
+            // Carica componenti
+            await loadAdminHeader();
+            await loadAdminSidebar();
+            await loadAdminFooter();
+            
+            // Inizializza admin panel
+            if (typeof initializeAdminPanel === 'function') {
+                initializeAdminPanel();
+            }
+            
+            console.log('✅ Medical AI Admin Panel caricato');
+        });
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+/* ============================================================================
+   ADMIN SIDEBAR STYLES - Medical AI
+   ============================================================================ */
+
+:root {
+    --primary-color: #0061b1;
+    --primary-light: #0073d4;
+    --primary-lighter: #e3f2fd;
+    --text-dark: #1a1a1a;
+    --text-light: #666;
+    --text-lighter: #999;
+    --bg-sidebar: #f8f9fa;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== APP SIDEBAR ===== */
+.app-sidebar {
+    width: 280px;
+    background: var(--bg-sidebar);
+    border-right: 2px solid var(--border-color);
+    padding: 20px 0;
+    overflow-y: auto;
+    height: calc(100vh - 80px);
+    position: sticky;
+    top: 80px;
+    z-index: 50;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ===== SIDEBAR MENU ===== */
+.sidebar-menu {
+    padding: 0;
+}
+
+.sidebar-menu:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-menu-title {
+    margin: 0;
+    padding: 15px 20px;
+    font-size: 0.75em;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar-menu-title i {
+    font-size: 0.9em;
+    color: var(--primary-color);
+}
+
+.sidebar-menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    position: relative;
+}
+
+.sidebar-link:hover {
+    background: rgba(0, 97, 177, 0.08);
+    border-left-color: var(--primary-color);
+    color: var(--primary-color);
+    padding-left: 24px;
+}
+
+.sidebar-link.active {
+    background: var(--primary-lighter);
+    border-left-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    padding-left: 24px;
+    box-shadow: inset 4px 0 0 var(--primary-color);
+}
+
+.sidebar-link i {
+    font-size: 1.1em;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar-link span {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ===== SIDEBAR SCROLL ===== */
+.app-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.app-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(0, 97, 177, 0.2);
+    border-radius: 3px;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 97, 177, 0.4);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+    .app-sidebar {
+        width: 250px;
+    }
+
+    .sidebar-menu-title {
+        padding: 12px 15px;
+        font-size: 0.7em;
+    }
+
+    .sidebar-link {
+        padding: 10px 15px;
+    }
+
+    .sidebar-link:hover {
+        padding-left: 20px;
+    }
+
+    .sidebar-link.active {
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-sidebar {
+        position: fixed;
+        left: 0;
+        top: 80px;
+        height: calc(100vh - 80px);
+        width: 0;
+        background: var(--bg-sidebar);
+        border-right: 2px solid var(--border-color);
+        overflow: hidden;
+        transition: width 0.3s ease;
+        z-index: 999;
+        box-shadow: var(--shadow);
+    }
+
+    .app-sidebar.show {
+        width: 240px;
+    }
+
+    .sidebar-link span {
+        display: block;
+    }
+
+    .sidebar-menu-title {
+        padding: 12px 20px;
+    }
+
+    .sidebar-link {
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-sidebar {
+        width: 0;
+    }
+
+    .app-sidebar.show {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .sidebar-menu-title {
+        padding: 10px 15px;
+        font-size: 0.65em;
+    }
+
+    .sidebar-link {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+
+    .sidebar-link i {
+        font-size: 1em;
+    }
+}

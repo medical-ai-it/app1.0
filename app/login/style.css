@@ -1,0 +1,540 @@
+/* Nel :root aggiungi queste variabili se non presenti */
+:root {
+    --primary-color: #0061b1;
+    --primary-light: #E3F2FD;
+    --primary-lighter: #F8F9FF;
+    --primary-dark: #004a87;
+    --secondary-color: #0073d4;
+    --text-dark: #1A1A1A;
+    --text-color: #2C3E50;
+    --text-light: #7F8C8D;
+    --danger-color: #EF5350;
+    --success-color: #26A69A;
+    --bg-white: #FFFFFF;
+    --bg-light: #F8F9FA;
+    --border-color: #E8EEF5;
+    --shadow: 0 2px 8px rgba(0, 97, 177, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 97, 177, 0.12);
+    --shadow-lg: 0 8px 24px rgba(0, 97, 177, 0.15);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    background: linear-gradient(135deg, #F5F7FB 0%, #E3F2FD 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 20px 100px 20px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 30px;
+}
+
+.login-box {
+    background: var(--bg-white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(0, 97, 177, 0.1);
+    animation: slideIn 0.5s ease-out;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo {
+    max-width: 160px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.login-header .subtitle {
+    color: var(--text-color);
+    font-size: 1.1em;
+    margin: 0;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.form-group input {
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1em;
+    transition: all 0.3s;
+    background: var(--bg-light);
+    color: var(--text-color);
+    font-family: inherit;
+}
+
+.form-group input::placeholder {
+    color: var(--text-light);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--bg-white);
+    box-shadow: 0 0 0 4px rgba(0, 97, 177, 0.1);
+}
+
+/* ===== FORM OPTIONS (Ricordami + Password dimenticata) ===== */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--text-color);
+    font-weight: 500;
+    user-select: none;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+    border-radius: 4px;
+}
+
+.remember-me input[type="checkbox"]:hover {
+    box-shadow: 0 0 0 3px rgba(0, 97, 177, 0.1);
+}
+
+.forgot-password {
+    font-size: 0.9em;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* ===== BUTTON ===== */
+.btn-login {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--bg-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    font-family: inherit;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+.btn-login:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===== ERROR MESSAGE ===== */
+.error-message {
+    color: var(--danger-color);
+    background: #FFEBEE;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 4px solid var(--danger-color);
+    font-size: 0.9em;
+    font-weight: 600;
+    display: none;
+    margin-top: 15px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* ===== LOADING SPINNER ===== */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    gap: 15px;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 97, 177, 0.2);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+.loading-spinner p {
+    color: var(--text-light);
+    font-size: 0.9em;
+    margin: 0;
+}
+
+/* ===== FOOTER ===== */
+.login-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    border-top: 1px solid var(--border-color);
+    padding: 20px;
+    text-align: center;
+}
+
+.footer-links {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.separator {
+    color: var(--text-light);
+    margin: 0 8px;
+    font-weight: 300;
+}
+
+.footer-text {
+    font-size: 0.75em;
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .login-box {
+        padding: 35px;
+    }
+
+    .header-logo {
+        max-width: 140px;
+    }
+
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .forgot-password {
+        align-self: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 20px 20px 140px 20px;
+    }
+
+    .login-box {
+        padding: 30px 20px;
+    }
+
+    .login-header {
+        margin-bottom: 30px;
+        gap: 12px;
+    }
+
+    .header-logo {
+        max-width: 120px;
+    }
+
+    .login-header .subtitle {
+        font-size: 1em;
+    }
+
+    .form-group input {
+        padding: 10px 12px;
+        font-size: 16px; /* Previene zoom su iOS */
+    }
+
+    .form-options {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin: 8px 0;
+    }
+
+    .remember-me {
+        justify-content: flex-start;
+    }
+
+    .forgot-password {
+        text-align: center;
+    }
+
+    .btn-login {
+        padding: 11px 20px;
+    }
+
+    .login-footer {
+        padding: 16px;
+    }
+
+    .footer-links {
+        margin-bottom: 10px;
+    }
+
+    .footer-links a {
+        font-size: 0.8em;
+        display: inline-block;
+    }
+
+    .separator {
+        margin: 0 6px;
+    }
+
+    .footer-text {
+        font-size: 0.7em;
+    }
+}
+
+/* ===== FORGOT PASSWORD MODAL ===== */
+.forgot-password-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.modal-content {
+    position: relative;
+    background: var(--bg-white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-lg);
+    max-width: 420px;
+    width: 90%;
+    animation: slideIn 0.3s ease-out;
+    z-index: 1001;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.3em;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: color 0.3s;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: var(--text-dark);
+}
+
+.modal-body {
+    margin-bottom: 25px;
+}
+
+.modal-body p {
+    color: var(--text-color);
+    margin-bottom: 20px;
+    font-size: 0.95em;
+}
+
+.form-message {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 0.9em;
+    font-weight: 600;
+    display: none;
+}
+
+.form-message.show,
+.form-message.success,
+.form-message.error {
+    display: block;
+}
+
+.form-message.success {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-left: 4px solid #4CAF50;
+}
+
+.form-message.error {
+    background: #FFEBEE;
+    color: #C62828;
+    border-left: 4px solid #EF5350;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.modal-actions button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-secondary {
+    background: var(--bg-light);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--bg-white);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ===== NOTIFICATION ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    animation: slideIn 0.3s ease-out;
+    z-index: 2000;
+    max-width: 350px;
+}
+
+.notification.success {
+    background: var(--success-color);
+}
+
+.notification.error {
+    background: var(--danger-color);
+}

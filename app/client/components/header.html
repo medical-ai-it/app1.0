@@ -1,0 +1,47 @@
+<header class="app-header">
+    <div class="header-content">
+        <div class="header-left">
+            <img id="headerLogo" class="header-logo" src="https://medical-ai.it/assets/images/logo.png" alt="Medical AI">
+            <div class="studio-info">
+                <div class="studio-details">
+                    <span id="headerStudioName" class="studio-name">Studio</span>
+                    <span id="headerStudioEmail" class="studio-email">email@studio.com</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-actions">
+                <div class="header-user-info">
+                    <span class="user-label">Utente:</span>
+                    <span id="headerUserEmail" class="user-email">user@studio.com</span>
+                </div>
+                <div class="profile-menu-container">
+                    <button id="profileMenuBtn" class="btn-profile">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Profilo</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </button>
+                    <div id="profileDropdown" class="profile-dropdown">
+                        <a href="#" class="dropdown-item" onclick="navigateTo('profile')">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Profilo</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="navigateTo('consumi')">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Consumi</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="navigateTo('settings')">
+                            <i class="fas fa-cog"></i>
+                            <span>Impostazioni</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item logout-item" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Esci</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

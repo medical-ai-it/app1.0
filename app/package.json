@@ -1,0 +1,11 @@
+{
+  "name": "studio-dentistico-ai",
+  "version": "1.0.0",
+  "description": "Sistema di gestione appuntamenti con registrazioni vocali",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "http-server -p 8000 -c-1"
+  },
+  "author": "Studio Dentistico AI",
+  "license": "MIT"
+}

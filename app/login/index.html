@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical AI - Login</title>
+    <link rel="icon" type="image/png" href="https://medical-ai.it/assets/images/favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="https://medical-ai.it/assets/images/logo.png" alt="Medical AI" class="header-logo">
+                <p class="subtitle">Accedi al tuo account</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Inserisci la tua email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Inserisci la tua password"
+                        required
+                    >
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <span>Ricordami</span>
+                    </label>
+                    <a href="#" class="forgot-password">Password dimenticata?</a>
+                </div>
+
+                <button type="submit" class="btn-login">Accedi</button>
+            </form>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                <div class="spinner"></div>
+                <p>Accesso in corso...</p>
+            </div>
+        </div>
+
+        <footer class="login-footer">
+            <div class="footer-links">
+                <a href="https://medical-ai.it/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                <span class="separator">•</span>
+                <a href="https://medical-ai.it/terms-of-service" target="_blank" rel="noopener noreferrer">Termini di Servizio</a>
+                <span class="separator">•</span>
+                <a href="https://medical-ai.it/cookie-policy" target="_blank" rel="noopener noreferrer">Cookie Policy</a>
+            </div>
+            <p class="footer-text">&copy; 2025 Medical AI. Tutti i diritti riservati.</p>
+        </footer>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
