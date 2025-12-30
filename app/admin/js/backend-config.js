@@ -1,22 +1,45 @@
 // ============================================================================
 // Backend Configuration - Medical AI
 // Gestisce tutte le chiamate API al backend Express + MySQL
+// Support: localhost (dev) e Render (production)
 // ============================================================================
 
-const BACKEND_CONFIG = {
-  // Backend Express locale (development)
-  baseURL: 'http://localhost:3001/api',
-  // Per production: baseURL: 'https://medical-ai-backend.onrender.com/api'
+// ✅ DETERMINA L'URL BASE IN BASE ALL'AMBIENTE
+const BACKEND_CONFIG = (() => {
+  let baseURL;
   
-  endpoints: {
-    admins: '/admins',
-    studios: '/studios',
-    users: '/users',
-    login: '/auth/login',
-    resetPassword: '/reset-password',
-    changePassword: '/change-password'
+  // Se siamo in localhost, usa il backend locale
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    baseURL = 'http://localhost:3001/api';
+    console.log('🔧 Backend: LOCALHOST (development)');
   }
-};
+  // Se siamo su medical-ai.it, usa Render
+  else if (window.location.hostname === 'medical-ai.it' || window.location.hostname === 'app.medical-ai.it') {
+    baseURL = 'https://app1-0-m2yf.onrender.com/api';
+    console.log('☁️ Backend: RENDER (production)');
+  }
+  // Fallback per altri domini
+  else {
+    baseURL = 'https://app1-0-m2yf.onrender.com/api';
+    console.log('⚠️ Backend: RENDER (fallback)');
+  }
+
+  return {
+    baseURL: baseURL,
+    endpoints: {
+      admins: '/admins',
+      studios: '/studios',
+      users: '/users',
+      login: '/auth/login',
+      resetPassword: '/reset-password',
+      changePassword: '/change-password'
+    }
+  };
+})();
+
+// Esponi l'URL per debugging
+window.BACKEND_BASE_URL = BACKEND_CONFIG.baseURL;
+console.log('📍 API Base URL:', BACKEND_CONFIG.baseURL);
 
 /**
  * Wrapper generico per le chiamate al backend
@@ -166,7 +189,6 @@ async function resetPasswordInDB(adminId, newPassword) {
     const admin = adminDB.getAdminById(adminId);
     if (admin) {
       admin.password = newPassword;
-      adminDB.updateAdmin(adminId, admin);
     }
     showNotification('⚠️ Password aggiornata localmente (backend non disponibile)', 'info');
     return true;
@@ -207,16 +229,12 @@ async function authenticateAdmin(email, password) {
     );
     
     if (result.success && result.data) {
-      localStorage.setItem('userSession', JSON.stringify(result.data));
-      showNotification('✅ Login effettuato con successo', 'success');
-      return result.data;
+      return result;
     }
   } catch (error) {
     const admin = adminDB.validateAdmin(email, password);
     if (admin) {
-      localStorage.setItem('userSession', JSON.stringify(admin));
-      showNotification('⚠️ Login con dati locali (backend non disponibile)', 'info');
-      return admin;
+      return { success: true, data: admin };
     }
     showNotification(`❌ Credenziali non valide`, 'error');
     throw error;
@@ -358,8 +376,8 @@ async function createUserInDB(userData) {
     const result = await callBackendAPI(BACKEND_CONFIG.endpoints.users, 'POST', {
       email: userData.email,
       password: userData.password,
-      name: userData.name || '',
-      studio_id: userData.studioId,
+      name: userData.name || null,
+      studio_id: userData.studio_id,
       role: userData.role || 'user',
       status: 'active'
     });
@@ -383,8 +401,8 @@ async function updateUserInDB(userId, userData) {
       'PUT',
       {
         email: userData.email,
-        name: userData.name,
-        role: userData.role,
+        name: userData.name || null,
+        role: userData.role || 'user',
         status: userData.status || 'active'
       }
     );
@@ -425,18 +443,15 @@ async function updateAdminProfileInDB(adminId, profileData) {
     const result = await callBackendAPI(
       `${BACKEND_CONFIG.endpoints.admins}/${adminId}`,
       'PUT',
-      {
-        name: profileData.name,
-        email: profileData.email,
-        status: 'active'
-      }
+      profileData
     );
     
     showNotification('✅ Profilo aggiornato con successo', 'success');
-    return result.data || profileData;
+    return result;
   } catch (error) {
-    adminDB.updateAdmin(adminId, profileData);
-    showNotification('⚠️ Profilo aggiornato localmente (backend non disponibile)', 'info');
+    const admin = adminDB.getAdminById(adminId);
+    if (admin) Object.assign(admin, profileData);
+    showNotification('⚠️ Aggiornato localmente (backend non disponibile)', 'info');
     return profileData;
   }
 }
@@ -458,8 +473,7 @@ async function changeAdminPasswordInDB(adminId, oldPassword, newPassword) {
     showNotification('✅ Password cambiata con successo', 'success');
     return result;
   } catch (error) {
-    console.error('❌ Errore nel cambio password:', error);
-    showNotification('❌ ' + (error.message || 'Errore nel cambio password'), 'error');
+    showNotification(`❌ Errore nel cambio password: ${error.message}`, 'error');
     throw error;
   }
 }
