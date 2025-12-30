@@ -41,9 +41,9 @@ app.use(cors({
     'http://localhost:3000',
     'http://localhost:8000',
     'http://localhost:8080',
-    'https://medical-ai.it',  // ✅ Aggiungi il tuo dominio
+    'https://medical-ai.it',
     'https://app.medical-ai.it',
-    'https://app1-0-m2yf.onrender.com'  // ✅ Aggiungi anche Render
+    'https://app1-0-m2yf.onrender.com'
   ],
   credentials: true
 }));
@@ -53,7 +53,6 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // ==================== STATIC FILE SERVING ====================
-// Serve recording files with proper headers
 app.use('/api/uploads/recordings', express.static(recordingsDir, {
   dotfiles: 'ignore',
   index: false,
@@ -66,7 +65,6 @@ app.use('/api/uploads/recordings', express.static(recordingsDir, {
   }
 }));
 
-// Alias per compatibilità - serve dalla stessa cartella
 app.use('/api/uploads', express.static(recordingsDir, {
   setHeaders: (res, filepath, stat) => {
     res.set('Access-Control-Allow-Origin', '*');
@@ -93,9 +91,6 @@ app.use((req, res, next) => {
 
 // ==================== UTILITY FUNCTIONS ====================
 
-/**
- * Save base64 audio data to file
- */
 function saveAudioFile(base64Data, filename) {
   try {
     if (!base64Data) {
@@ -103,7 +98,6 @@ function saveAudioFile(base64Data, filename) {
       return false;
     }
 
-    // Remove data:audio/webm;base64, prefix if present
     let audioData = base64Data;
     if (base64Data.includes('base64,')) {
       audioData = base64Data.split('base64,')[1];
@@ -119,7 +113,6 @@ function saveAudioFile(base64Data, filename) {
 
     fs.writeFileSync(filepath, buffer);
     
-    // Verify file was created
     const stats = fs.statSync(filepath);
     console.log(`✅ Audio file saved: ${filename} (${(stats.size / 1024).toFixed(2)} KB)`);
     
@@ -131,9 +124,6 @@ function saveAudioFile(base64Data, filename) {
   }
 }
 
-/**
- * Delete audio file
- */
 function deleteAudioFile(filename) {
   try {
     const filepath = path.join(recordingsDir, filename);
@@ -161,7 +151,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Test endpoint to check file serving
 app.get('/api/uploads/test', (req, res) => {
   try {
     const files = fs.readdirSync(recordingsDir);
@@ -181,10 +170,6 @@ app.get('/api/uploads/test', (req, res) => {
 
 // ==================== AUTH ROUTES ====================
 
-/**
- * POST /api/auth/login
- * Unified authentication for admins and studio users
- */
 app.post('/api/auth/login', async (req, res) => {
   let connection;
   try {
@@ -203,7 +188,6 @@ app.post('/api/auth/login', async (req, res) => {
 
     connection = await pool.getConnection();
     
-    // ===== ADMIN LOGIN =====
     console.log(`\n🔍 Checking ADMINS table...`);
     const [adminResults] = await connection.query(
       'SELECT id, name, email, role, status FROM admins WHERE email = ? AND password = ? AND status = "active"',
@@ -226,7 +210,6 @@ app.post('/api/auth/login', async (req, res) => {
     
     console.log(`❌ No admin found with these credentials`);
     
-    // ===== STUDIO USER LOGIN =====
     console.log(`\n🔍 Checking USERS table...`);
     const [userResults] = await connection.query(
       `SELECT u.id, u.email, u.name, u.role, u.status, u.studio_id, s.name as studio_name 
@@ -253,7 +236,6 @@ app.post('/api/auth/login', async (req, res) => {
     console.log(`❌ No studio user found with these credentials`);
     connection.release();
     
-    // ===== INVALID CREDENTIALS =====
     return res.status(401).json({ 
       success: false, 
       error: 'Invalid email or password' 
@@ -269,9 +251,6 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-/**
- * POST /api/auth/forgot-password
- */
 app.post('/api/auth/forgot-password', async (req, res) => {
   let connection;
   try {
@@ -286,7 +265,6 @@ app.post('/api/auth/forgot-password', async (req, res) => {
 
     connection = await pool.getConnection();
     
-    // Cerca ADMIN
     const [adminResults] = await connection.query(
       'SELECT id, email FROM admins WHERE email = ? AND status = "active"',
       [email.toLowerCase()]
@@ -311,7 +289,6 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       });
     }
     
-    // Cerca STUDIO USER
     const [userResults] = await connection.query(
       'SELECT id, email FROM users WHERE email = ? AND status = "active"',
       [email.toLowerCase()]
@@ -350,9 +327,6 @@ app.post('/api/auth/forgot-password', async (req, res) => {
   }
 });
 
-/**
- * POST /api/auth/reset-password
- */
 app.post('/api/auth/reset-password', async (req, res) => {
   let connection;
   try {
@@ -417,9 +391,6 @@ app.post('/api/auth/reset-password', async (req, res) => {
   }
 });
 
-/**
- * POST /api/auth/verify-session
- */
 app.post('/api/auth/verify-session', async (req, res) => {
   let connection;
   try {
@@ -468,9 +439,6 @@ app.post('/api/auth/verify-session', async (req, res) => {
   }
 });
 
-/**
- * POST /api/auth/logout
- */
 app.post('/api/auth/logout', async (req, res) => {
   try {
     console.log('👋 User logout');
@@ -486,7 +454,6 @@ app.post('/api/auth/logout', async (req, res) => {
 
 // ==================== ADMIN ROUTES ====================
 
-// GET all admins
 app.get('/api/admins', async (req, res) => {
   let connection;
   try {
@@ -503,7 +470,6 @@ app.get('/api/admins', async (req, res) => {
   }
 });
 
-// GET single admin
 app.get('/api/admins/:id', async (req, res) => {
   let connection;
   try {
@@ -525,7 +491,6 @@ app.get('/api/admins/:id', async (req, res) => {
   }
 });
 
-// POST create admin
 app.post('/api/admins', async (req, res) => {
   let connection;
   try {
@@ -562,7 +527,6 @@ app.post('/api/admins', async (req, res) => {
   }
 });
 
-// PUT update admin
 app.put('/api/admins/:id', async (req, res) => {
   let connection;
   try {
@@ -595,7 +559,6 @@ app.put('/api/admins/:id', async (req, res) => {
   }
 });
 
-// DELETE admin (soft delete)
 app.delete('/api/admins/:id', async (req, res) => {
   let connection;
   try {
@@ -618,7 +581,6 @@ app.delete('/api/admins/:id', async (req, res) => {
   }
 });
 
-// POST reset password (admin)
 app.post('/api/admins/:id/reset-password', async (req, res) => {
   let connection;
   try {
@@ -650,7 +612,6 @@ app.post('/api/admins/:id/reset-password', async (req, res) => {
   }
 });
 
-// POST change password (admin)
 app.post('/api/admins/:id/change-password', async (req, res) => {
   let connection;
   try {
@@ -697,7 +658,6 @@ app.post('/api/admins/:id/change-password', async (req, res) => {
 
 // ==================== STUDIOS ROUTES ====================
 
-// GET all studios
 app.get('/api/studios', async (req, res) => {
   let connection;
   try {
@@ -714,7 +674,6 @@ app.get('/api/studios', async (req, res) => {
   }
 });
 
-// GET single studio
 app.get('/api/studios/:id', async (req, res) => {
   let connection;
   try {
@@ -736,7 +695,6 @@ app.get('/api/studios/:id', async (req, res) => {
   }
 });
 
-// POST create studio
 app.post('/api/studios', async (req, res) => {
   let connection;
   try {
@@ -773,7 +731,6 @@ app.post('/api/studios', async (req, res) => {
   }
 });
 
-// PUT update studio
 app.put('/api/studios/:id', async (req, res) => {
   let connection;
   try {
@@ -806,7 +763,6 @@ app.put('/api/studios/:id', async (req, res) => {
   }
 });
 
-// DELETE studio (soft delete)
 app.delete('/api/studios/:id', async (req, res) => {
   let connection;
   try {
@@ -831,7 +787,6 @@ app.delete('/api/studios/:id', async (req, res) => {
 
 // ==================== USERS ROUTES ====================
 
-// GET all users
 app.get('/api/users', async (req, res) => {
   let connection;
   try {
@@ -848,7 +803,6 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-// GET single user
 app.get('/api/users/:id', async (req, res) => {
   let connection;
   try {
@@ -870,7 +824,6 @@ app.get('/api/users/:id', async (req, res) => {
   }
 });
 
-// POST create user
 app.post('/api/users', async (req, res) => {
   let connection;
   try {
@@ -907,7 +860,6 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
-// PUT update user
 app.put('/api/users/:id', async (req, res) => {
   let connection;
   try {
@@ -940,7 +892,6 @@ app.put('/api/users/:id', async (req, res) => {
   }
 });
 
-// DELETE user (soft delete)
 app.delete('/api/users/:id', async (req, res) => {
   let connection;
   try {
@@ -965,7 +916,6 @@ app.delete('/api/users/:id', async (req, res) => {
 
 // ==================== PATIENTS ROUTES ====================
 
-// GET all patients for a studio
 app.get('/api/patients', async (req, res) => {
   let connection;
   try {
@@ -988,7 +938,6 @@ app.get('/api/patients', async (req, res) => {
   }
 });
 
-// GET single patient
 app.get('/api/patients/:id', async (req, res) => {
   let connection;
   try {
@@ -1018,7 +967,6 @@ app.get('/api/patients/:id', async (req, res) => {
   }
 });
 
-// POST create patient
 app.post('/api/patients', async (req, res) => {
   let connection;
   try {
@@ -1055,7 +1003,6 @@ app.post('/api/patients', async (req, res) => {
   }
 });
 
-// PUT update patient
 app.put('/api/patients/:id', async (req, res) => {
   let connection;
   try {
@@ -1092,7 +1039,6 @@ app.put('/api/patients/:id', async (req, res) => {
   }
 });
 
-// DELETE patient (soft delete)
 app.delete('/api/patients/:id', async (req, res) => {
   let connection;
   try {
@@ -1120,7 +1066,6 @@ app.delete('/api/patients/:id', async (req, res) => {
 
 // ==================== RECORDINGS ROUTES ====================
 
-// GET all recordings for a studio
 app.get('/api/recordings', async (req, res) => {
   let connection;
   try {
@@ -1149,7 +1094,6 @@ app.get('/api/recordings', async (req, res) => {
   }
 });
 
-// GET recordings for a patient
 app.get('/api/recordings/patient/:patientId', async (req, res) => {
   let connection;
   try {
@@ -1180,7 +1124,6 @@ app.get('/api/recordings/patient/:patientId', async (req, res) => {
   }
 });
 
-// GET single recording with referto
 app.get('/api/recordings/:id', async (req, res) => {
   let connection;
   try {
@@ -1204,7 +1147,6 @@ app.get('/api/recordings/:id', async (req, res) => {
 
     const recording = recordingResults[0];
     
-    // Parse JSON fields
     const referto = recording.referto_data ? JSON.parse(recording.referto_data) : null;
     const odontogramma = recording.odontogramma_data ? JSON.parse(recording.odontogramma_data) : null;
 
@@ -1223,7 +1165,6 @@ app.get('/api/recordings/:id', async (req, res) => {
   }
 });
 
-// POST create recording with audio file
 app.post('/api/recordings', async (req, res) => {
   let connection;
   try {
@@ -1242,7 +1183,6 @@ app.post('/api/recordings', async (req, res) => {
     
     let audioUrl = null;
 
-    // Save audio file if provided
     if (audio_data) {
       try {
         saveAudioFile(audio_data, audioFilename);
@@ -1278,17 +1218,21 @@ app.post('/api/recordings', async (req, res) => {
   }
 });
 
-// ✅ POST /api/recordings/:id/process - PROCESS CON OPENAI
+// ✅ POST /api/recordings/:id/process - AGGIORNATO CON LOGGING DETTAGLIATO
 app.post('/api/recordings/:id/process', async (req, res) => {
   let connection;
   try {
     const recordingId = req.params.id;
     
-    console.log(`\n🤖 Processing recording ${recordingId}...`);
+    console.log(`\n${'='.repeat(80)}`);
+    console.log(`🤖 PROCESSING RECORDING: ${recordingId}`);
+    console.log(`${'='.repeat(80)}`);
 
+    console.log('📍 Step 0: Getting database connection...');
     connection = await pool.getConnection();
+    console.log('✅ Database connection established');
     
-    // Recupera registrazione con doctor_name
+    console.log('📍 Step 1: Fetching recording from database...');
     const [recordings] = await connection.query(
       'SELECT id, studio_id, patient_id, visit_type, doctor_name, audio_url FROM recordings WHERE id = ? AND status != "deleted"',
       [recordingId]
@@ -1296,49 +1240,138 @@ app.post('/api/recordings/:id/process', async (req, res) => {
     
     if (!recordings || recordings.length === 0) {
       connection.release();
+      console.error('❌ Recording not found in database');
       return res.status(404).json({ success: false, error: 'Recording not found' });
     }
 
     const recording = recordings[0];
-    const audioFilePath = path.join(recordingsDir, path.basename(recording.audio_url));
+    console.log('✅ Recording found:', {
+      id: recording.id,
+      visitType: recording.visit_type,
+      doctorName: recording.doctor_name,
+      audioUrl: recording.audio_url
+    });
 
+    console.log('📍 Step 2: Verifying audio file exists...');
+    const audioFilePath = path.join(recordingsDir, path.basename(recording.audio_url));
+    console.log('📂 Expected audio path:', audioFilePath);
+    console.log('📂 Recording dir exists:', fs.existsSync(recordingsDir));
+    console.log('📂 Audio file exists:', fs.existsSync(audioFilePath));
+    
     if (!fs.existsSync(audioFilePath)) {
       connection.release();
-      return res.status(404).json({ success: false, error: 'Audio file not found' });
+      const dirContents = fs.readdirSync(recordingsDir).slice(0, 5);
+      console.error('❌ Audio file not found at:', audioFilePath);
+      console.error('📂 Recent files in recordings dir:', dirContents);
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Audio file not found',
+        details: { audioFilePath, recentFiles: dirContents }
+      });
+    }
+    console.log('✅ Audio file verified');
+
+    console.log('📍 Step 3: Loading OpenAI service...');
+    let openaiService;
+    try {
+      openaiService = require('./services/openai-service');
+      console.log('✅ OpenAI service loaded');
+    } catch (e) {
+      connection.release();
+      console.error('❌ Failed to load OpenAI service:', e.message);
+      return res.status(500).json({
+        success: false,
+        error: 'OpenAI service load failed',
+        message: e.message
+      });
+    }
+    
+    console.log('📍 Step 4: Transcribing audio with Whisper...');
+    console.log('🎤 Audio file:', audioFilePath);
+    let transcript;
+    try {
+      transcript = await openaiService.transcribeAudio(audioFilePath);
+      console.log('✅ Transcription successful');
+      console.log('📝 Transcript length:', transcript.length, 'chars');
+      console.log('📝 First 100 chars:', transcript.substring(0, 100));
+    } catch (e) {
+      connection.release();
+      console.error('❌ Transcription failed:', e.message);
+      console.error('❌ Stack:', e.stack);
+      return res.status(500).json({
+        success: false,
+        error: 'Transcription failed',
+        message: e.message
+      });
     }
 
-    // Load OpenAI service
-    const openaiService = require('./services/openai-service');
-    
-    // Step 1: Transcribe audio
-    console.log('🎤 Step 1: Transcribing audio...');
-    const transcript = await openaiService.transcribeAudio(audioFilePath);
+    console.log('📍 Step 5: Generating referto...');
+    console.log('📋 Visit type:', recording.visit_type);
+    console.log('👨‍⚕️ Doctor name:', recording.doctor_name);
+    let refertoResult;
+    try {
+      refertoResult = await openaiService.generateReferto(transcript, recording.visit_type, recording.doctor_name);
+      console.log('✅ Referto generation successful');
+      console.log('📋 Referto keys:', Object.keys(refertoResult).join(', '));
+    } catch (e) {
+      connection.release();
+      console.error('❌ Referto generation failed:', e.message);
+      console.error('❌ Stack:', e.stack);
+      return res.status(500).json({
+        success: false,
+        error: 'Referto generation failed',
+        message: e.message
+      });
+    }
 
-    // Step 2: Generate referto with doctor name
-    console.log('📋 Step 2: Generating referto...');
-    const refertoResult = await openaiService.generateReferto(transcript, recording.visit_type, recording.doctor_name);
+    console.log('📍 Step 6: Analyzing odontogramma...');
+    let odontogrammaData;
+    try {
+      odontogrammaData = await openaiService.analyzeOdontogrammaData(refertoResult.referto, recording.visit_type);
+      console.log('✅ Odontogramma analysis successful');
+      console.log('🦷 Odontogramma keys:', Object.keys(odontogrammaData).join(', '));
+    } catch (e) {
+      connection.release();
+      console.error('❌ Odontogramma analysis failed:', e.message);
+      console.error('❌ Stack:', e.stack);
+      return res.status(500).json({
+        success: false,
+        error: 'Odontogramma analysis failed',
+        message: e.message
+      });
+    }
 
-    // Step 3: Analyze odontogramma
-    console.log('🦷 Step 3: Analyzing odontogramma...');
-    const odontogrammaData = await openaiService.analyzeOdontogrammaData(refertoResult.referto, recording.visit_type);
-
-    // Update recording in DB
+    console.log('📍 Step 7: Updating database with results...');
     const refertoData = JSON.stringify(refertoResult.referto);
     const odontogrammaDataStr = JSON.stringify(odontogrammaData);
-
-    await connection.query(
-      `UPDATE recordings SET 
-        transcript = ?,
-        referto_data = ?,
-        odontogramma_data = ?,
-        processing_status = 'completed'
-      WHERE id = ?`,
-      [transcript, refertoData, odontogrammaDataStr, recordingId]
-    );
+    
+    try {
+      await connection.query(
+        `UPDATE recordings SET 
+          transcript = ?,
+          referto_data = ?,
+          odontogramma_data = ?,
+          processing_status = 'completed'
+        WHERE id = ?`,
+        [transcript, refertoData, odontogrammaDataStr, recordingId]
+      );
+      console.log('✅ Database update successful');
+    } catch (e) {
+      connection.release();
+      console.error('❌ Database update failed:', e.message);
+      console.error('❌ Stack:', e.stack);
+      return res.status(500).json({
+        success: false,
+        error: 'Database update failed',
+        message: e.message
+      });
+    }
 
     connection.release();
 
-    console.log(`✅ Processing completato per ${recordingId}`);
+    console.log(`${'='.repeat(80)}`);
+    console.log(`✅ PROCESSING COMPLETED FOR ${recordingId}`);
+    console.log(`${'='.repeat(80)}\n`);
 
     res.json({
       success: true,
@@ -1350,7 +1383,13 @@ app.post('/api/recordings/:id/process', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Processing error:', error.message);
+    console.error(`${'='.repeat(80)}`);
+    console.error(`❌ PROCESSING ERROR: ${error.message}`);
+    console.error(`${'='.repeat(80)}`);
+    console.error('Full Error:', error);
+    console.error('Stack:', error.stack);
+    console.error(`${'='.repeat(80)}\n`);
+    
     if (connection) connection.release();
     
     res.status(500).json({
@@ -1361,7 +1400,6 @@ app.post('/api/recordings/:id/process', async (req, res) => {
   }
 });
 
-// ✅ GET /api/recordings/:id/referto - RECUPERA REFERTO
 app.get('/api/recordings/:id/referto', async (req, res) => {
   let connection;
   try {
@@ -1404,7 +1442,6 @@ app.get('/api/recordings/:id/referto', async (req, res) => {
   }
 });
 
-// PUT update recording
 app.put('/api/recordings/:id', async (req, res) => {
   let connection;
   try {
@@ -1445,7 +1482,6 @@ app.put('/api/recordings/:id', async (req, res) => {
   }
 });
 
-// DELETE recording (soft delete + remove audio file)
 app.delete('/api/recordings/:id', async (req, res) => {
   let connection;
   try {
@@ -1458,7 +1494,6 @@ app.delete('/api/recordings/:id', async (req, res) => {
 
     connection = await pool.getConnection();
     
-    // Get recording to find audio file
     const [recordingResults] = await connection.query(
       'SELECT audio_url FROM recordings WHERE id = ? AND studio_id = ?',
       [id, studio_id]
@@ -1467,14 +1502,12 @@ app.delete('/api/recordings/:id', async (req, res) => {
     if (recordingResults && recordingResults.length > 0) {
       const audioUrl = recordingResults[0].audio_url;
       
-      // Extract filename and delete audio file
       if (audioUrl && audioUrl.includes('/api/uploads/recordings/')) {
         const filename = audioUrl.split('/api/uploads/recordings/')[1];
         deleteAudioFile(filename);
       }
     }
 
-    // Soft delete recording
     await connection.query(
       'UPDATE recordings SET status = "deleted", updated_at = CURRENT_TIMESTAMP WHERE id = ? AND studio_id = ?',
       [id, studio_id]
@@ -1491,13 +1524,11 @@ app.delete('/api/recordings/:id', async (req, res) => {
 
 // ==================== ERROR HANDLING ====================
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error('\n🔥 UNHANDLED ERROR:', err);
   res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
-// 404 handler
 app.use((req, res) => {
   console.log(`❌ 404 Not Found: ${req.method} ${req.path}`);
   res.status(404).json({ success: false, error: 'Endpoint not found' });
@@ -1507,9 +1538,9 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`\n${'='.repeat(60)}`);
+  console.log(`\n${'='.repeat(80)}`);
   console.log(`🚀 MEDICAL AI SERVER STARTED`);
-  console.log(`${'='.repeat(60)}`);
+  console.log(`${'='.repeat(80)}`);
   console.log(`📊 Port: ${PORT}`);
   console.log(`📧 Health: http://localhost:${PORT}/api/health`);
   console.log(`📁 Uploads: ${uploadsDir}`);
@@ -1523,5 +1554,5 @@ app.listen(PORT, () => {
   console.log(`🤖 AI Processing: /api/recordings/:id/process`);
   console.log(`📋 Referto API: /api/recordings/:id/referto`);
   console.log(`📊 Static Files: /api/uploads/* and /api/uploads/recordings/*`);
-  console.log(`${'='.repeat(60)}\n`);
+  console.log(`${'='.repeat(80)}\n`);
 });
