@@ -91,6 +91,13 @@ app.use((req, res, next) => {
 
 // ==================== UTILITY FUNCTIONS ====================
 
+function getBaseUrl() {
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://app1-0-m2yf.onrender.com';
+  }
+  return 'http://localhost:3001';
+}
+
 function saveAudioFile(base64Data, filename) {
   try {
     if (!base64Data) {
@@ -146,6 +153,7 @@ app.get('/api/health', (req, res) => {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
+    baseUrl: getBaseUrl(),
     uploadsDir: uploadsDir,
     recordingsDir: recordingsDir
   });
@@ -164,6 +172,37 @@ app.get('/api/uploads/test', (req, res) => {
     res.status(500).json({
       error: error.message,
       recordingsDir: recordingsDir
+    });
+  }
+});
+
+app.get('/api/uploads/recordings/list', (req, res) => {
+  try {
+    const files = fs.readdirSync(recordingsDir);
+    
+    const fileList = files.map(file => {
+      const filepath = path.join(recordingsDir, file);
+      const stats = fs.statSync(filepath);
+      return {
+        name: file,
+        size: `${(stats.size / 1024).toFixed(2)} KB`,
+        created: stats.birthtime,
+        url: `${getBaseUrl()}/api/uploads/recordings/${file}`
+      };
+    });
+
+    res.json({
+      success: true,
+      directory: recordingsDir,
+      totalFiles: fileList.length,
+      baseUrl: getBaseUrl(),
+      files: fileList
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      directory: recordingsDir
     });
   }
 });
@@ -1186,8 +1225,10 @@ app.post('/api/recordings', async (req, res) => {
     if (audio_data) {
       try {
         saveAudioFile(audio_data, audioFilename);
-        audioUrl = `/api/uploads/recordings/${audioFilename}`;
-        console.log(`✅ Audio file saved with URL: ${audioUrl}`);
+        
+        // ✅ AGGIORNATO: Genera URL ASSOLUTO in base all'ambiente
+        audioUrl = `${getBaseUrl()}/api/uploads/recordings/${audioFilename}`;
+        console.log(`✅ Audio file saved with absolute URL: ${audioUrl}`);
       } catch (error) {
         console.error('❌ Failed to save audio file:', error.message);
       }
@@ -1542,10 +1583,13 @@ app.listen(PORT, () => {
   console.log(`🚀 MEDICAL AI SERVER STARTED`);
   console.log(`${'='.repeat(80)}`);
   console.log(`📊 Port: ${PORT}`);
-  console.log(`📧 Health: http://localhost:${PORT}/api/health`);
+  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔗 Base URL: ${getBaseUrl()}`);
+  console.log(`📧 Health: ${getBaseUrl()}/api/health`);
   console.log(`📁 Uploads: ${uploadsDir}`);
   console.log(`🎤 Recordings: ${recordingsDir}`);
-  console.log(`🔐 Auth endpoints: Login, Logout, Reset Password`);
+  console.log(`\n📋 ENDPOINTS:`);
+  console.log(`🔐 Auth endpoints: Login, Logout, Reset Password, Verify Session`);
   console.log(`👥 Admin CRUD: Create, Read, Update, Delete`);
   console.log(`🏥 Studios CRUD: Create, Read, Update, Delete`);
   console.log(`👤 Users CRUD: Create, Read, Update, Delete`);
@@ -1554,5 +1598,6 @@ app.listen(PORT, () => {
   console.log(`🤖 AI Processing: /api/recordings/:id/process`);
   console.log(`📋 Referto API: /api/recordings/:id/referto`);
   console.log(`📊 Static Files: /api/uploads/* and /api/uploads/recordings/*`);
+  console.log(`📂 File Listing: /api/uploads/test and /api/uploads/recordings/list`);
   console.log(`${'='.repeat(80)}\n`);
 });
