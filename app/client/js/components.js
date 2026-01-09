@@ -502,10 +502,12 @@ async function loadPatientsIntoDropdown() {
 // ==================== RECORDING SECTION ====================
 
 /**
- * Setup recording listeners ✅ CON doctorName
+ * Setup recording listeners ✅ CON doctorName E PAUSA/RIPRESA
  */
 function setupRecordingListeners() {
     const startBtn = document.getElementById('startRecording');
+    const pauseBtn = document.getElementById('pauseRecording');
+    const resumeBtn = document.getElementById('resumeRecording');
     const stopBtn = document.getElementById('stopRecording');
     const retakeBtn = document.getElementById('retakeRecording');
     const submitBtn = document.getElementById('submitRecording');
@@ -514,6 +516,8 @@ function setupRecordingListeners() {
     const doctorNameInput = document.getElementById('doctorName');
     
     if (startBtn) startBtn.addEventListener('click', handleStartRecording);
+    if (pauseBtn) pauseBtn.addEventListener('click', handlePauseRecording);
+    if (resumeBtn) resumeBtn.addEventListener('click', handleResumeRecording);
     if (stopBtn) stopBtn.addEventListener('click', handleStopRecording);
     if (retakeBtn) retakeBtn.addEventListener('click', handleRetakeRecording);
     if (submitBtn) submitBtn.addEventListener('click', handleSubmitRecording);
@@ -645,6 +649,7 @@ async function handleStartRecording() {
     
     if (success) {
         document.getElementById('startRecording').style.display = 'none';
+        document.getElementById('pauseRecording').style.display = 'flex';
         document.getElementById('stopRecording').style.display = 'flex';
         const recordingStatus = document.getElementById('recordingStatus');
         if (recordingStatus) recordingStatus.style.display = 'block';
@@ -658,17 +663,43 @@ async function handleStartRecording() {
 }
 
 /**
+ * Pausa registrazione ✅ NUOVO
+ */
+function handlePauseRecording() {
+    if (recordingManager.pauseRecording()) {
+        document.getElementById('pauseRecording').style.display = 'none';
+        document.getElementById('resumeRecording').style.display = 'flex';
+        showNotification('⏸️ Registrazione in pausa', 'info');
+        console.log('⏸️ Registrazione messa in pausa');
+    }
+}
+
+/**
+ * Riprendi registrazione ✅ NUOVO
+ */
+function handleResumeRecording() {
+    if (recordingManager.resumeRecording()) {
+        document.getElementById('resumeRecording').style.display = 'none';
+        document.getElementById('pauseRecording').style.display = 'flex';
+        showNotification('▶️ Registrazione ripresa', 'info');
+        console.log('▶️ Registrazione ripresa');
+    }
+}
+
+/**
  * Ferma registrazione
  */
 function handleStopRecording() {
     recordingManager.stopRecording();
     
     hideRecordingTipsCarousel();
+    document.getElementById('startRecording').style.display = 'flex';
+    document.getElementById('pauseRecording').style.display = 'none';
+    document.getElementById('resumeRecording').style.display = 'none';
     document.getElementById('stopRecording').style.display = 'none';
     const recordingStatus = document.getElementById('recordingStatus');
     if (recordingStatus) recordingStatus.style.display = 'none';
     document.getElementById('recordingPlayback').style.display = 'block';
-    document.getElementById('startRecording').style.display = 'flex';
     
     showNotification('⏹️ Registrazione completata', 'success');
 }
@@ -821,6 +852,9 @@ function resetRecordingForm() {
     const submissionStatus = document.getElementById('submissionStatus');
     if (submissionStatus) submissionStatus.style.display = 'none';
     document.getElementById('startRecording').style.display = 'flex';
+    document.getElementById('pauseRecording').style.display = 'none';
+    document.getElementById('resumeRecording').style.display = 'none';
+    document.getElementById('stopRecording').style.display = 'none';
     
     recordingManager.reset();
     
