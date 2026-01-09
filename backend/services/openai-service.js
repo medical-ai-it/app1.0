@@ -387,7 +387,7 @@ Analizza la trascrizione sopra e genera un referto strutturato in JSON seguendo 
         const response = await axios.post(
             `${OPENAI_BASE_URL}/chat/completions`,
             {
-                model: 'gpt-4-turbo-preview',
+                model: 'gpt-4o',
                 messages: [
                     {
                         role: 'system',
