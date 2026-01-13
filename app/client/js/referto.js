@@ -15,19 +15,17 @@
 let refertoData = null;
 let currentPatient = null;
 let currentRecordingId = null;
-let processingStarted = false; // Flag per evitare trigger multipli
+let processingStarted = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('✅ Pagina Referto caricata');
 
-    // Check if user is logged in
     if (!isUserLoggedIn()) {
         console.warn('⚠️ Utente non loggato - Reindirizzamento a login');
         window.location.href = '../login/index.html';
         return;
     }
 
-    // Initialize referto page
     await initializeReferto();
 });
 
@@ -36,16 +34,13 @@ document.addEventListener('DOMContentLoaded', async () => {
  */
 async function initializeReferto() {
     try {
-        // Mostra la sezione referto
         const refertoSection = document.getElementById('refertoSection');
         if (refertoSection) {
             refertoSection.style.display = 'flex';
         }
 
-        // Mostra loading screen
         showRefertoLoading();
 
-        // Load dynamic components
         try {
             await loadHeader();
         } catch (err) {
@@ -65,7 +60,6 @@ async function initializeReferto() {
             console.warn('⚠️ Footer non caricato:', err);
         }
 
-        // Estrai parametri URL
         const urlParams = new URLSearchParams(window.location.search);
         const patientId = urlParams.get('patientId');
         const recordingId = urlParams.get('recordingId');
@@ -78,9 +72,8 @@ async function initializeReferto() {
         }
 
         currentRecordingId = recordingId;
-        processingStarted = false; // Reset flag
+        processingStarted = false;
 
-        // Carica referto dal backend con polling
         await loadRefertoFromBackend(recordingId, patientId);
 
         console.log('✅ Referto inizializzato');
@@ -99,7 +92,7 @@ function showRefertoLoading() {
     if (!mainContent) return;
 
     mainContent.innerHTML = `
-        <div class="referto-loading">
+        <div class="referto-loading" id="loadingSpinner">
             <div></div>
             <div>
                 <h2>🤖 Elaborazione referto in corso</h2>
@@ -146,14 +139,11 @@ function showRefertoError(message) {
 
 /**
  * Attiva l'elaborazione del referto tramite API
- * Chiama POST /api/recordings/:id/process per avviare Whisper + GPT-4
- * ✅ AGGIORNATA: Usa window.API_BASE_URL dal client-api.js
  */
 async function triggerRefertoProcessing(recordingId) {
     try {
         console.log(`🚀 Attivazione elaborazione referto (recordingId: ${recordingId})...`);
         
-        // Usa API_BASE_URL dal client-api.js (dinamicamente scelto tra localhost e Render)
         const apiBaseUrl = window.API_BASE_URL || 'http://localhost:3001';
         const url = `${apiBaseUrl}/api/recordings/${recordingId}/process`;
         
@@ -185,16 +175,11 @@ async function triggerRefertoProcessing(recordingId) {
 
 /**
  * Carica il referto dal backend con polling
- * 
- * LOGICA:
- * - Primo tentativo: se status === 'pending', chiama triggerRefertoProcessing()
- * - Tentativi successivi: attendi che status diventi 'completed'
- * - Max 24 tentativi (2 minuti) prima di timeout
  */
 async function loadRefertoFromBackend(recordingId, patientId) {
     let attempts = 0;
-    const maxAttempts = 24; // 2 minuti: 24 × 5 secondi
-    let processingTriggered = false; // Flag locale per tenere traccia del trigger
+    const maxAttempts = 24;
+    let processingTriggered = false;
     
     return new Promise((resolve, reject) => {
         const pollReferto = async () => {
@@ -202,44 +187,58 @@ async function loadRefertoFromBackend(recordingId, patientId) {
                 console.log(`📋 Polling referto (tentativo ${attempts + 1}/${maxAttempts})...`);
                 
                 const response = await getReferto(recordingId);
-                console.log('📊 Risposta API:', {
+                console.log('📦 Risposta API completa:', response);
+                console.log('📊 Risposta API (riassunto):', {
                     recordingId: response.recordingId,
-                    processingStatus: response.processingStatus || response.processing_status,
+                    processingStatus: response.processingStatus,
                     hasReferto: !!response.referto,
                     hasTranscript: !!response.transcript
                 });
                 
-                // Estrai lo stato di elaborazione
-                const processingStatus = response.processingStatus || response.processing_status || 'unknown';
+                const processingStatus = response.processingStatus || 'unknown';
                 const referto = response.referto;
                 
                 // ✅ SUCCESS: referto completamente disponibile
                 if (referto && (processingStatus === 'completed' || processingStatus === 'success')) {
                     console.log('✅ Referto caricato dal backend');
+                    console.log('🔍 Struttura referto ricevuta:', {
+                        keys: Object.keys(referto),
+                        hasAnamnesi: !!referto.anamnesi,
+                        hasDiagnosi: !!referto.diagnosi
+                    });
                     
-                    // Salva dati paziente per uso successivo
                     currentPatient = {
                         id: patientId,
-                        firstName: response.patient?.first_name || response.patientFirstName || 'Paziente',
-                        lastName: response.patient?.last_name || response.patientLastName || '',
-                        doctorName: response.doctor_name || response.doctorName || 'Dr. Professionista'
+                        firstName: response.patientFirstName || 'Paziente',
+                        lastName: response.patientLastName || '',
+                        doctorName: response.doctorName || 'Dr. Professionista'
                     };
 
-                    // Salva i dati del referto
                     refertoData = response;
 
-                    // Aggiorna display
+                    console.log('🎯 Prima di displayRefertoComplete - verifico elementi DOM...');
+                    const loadingEl = document.getElementById('loadingSpinner');
+                    if (loadingEl) {
+                        console.log('✅ Elemento loading trovato');
+                    } else {
+                        console.warn('⚠️ Elemento loading non trovato');
+                    }
+                    
+                    const contentEl = document.querySelector('.referto-content');
+                    if (contentEl) {
+                        console.log('✅ Elemento referto-content trovato');
+                    } else {
+                        console.warn('⚠️ Elemento referto-content non trovato');
+                    }
+
                     displayRefertoComplete(response);
                     
-                    // Setup interazioni
                     setupOdontogrammaInteractions();
                     
                     resolve(response);
                     
                 } else if (processingStatus === 'pending' || processingStatus === 'processing' || !referto) {
-                    // ⏳ Still processing - no referto yet
                     
-                    // 🚀 Al PRIMO tentativo se status è "pending", attiva l'elaborazione
                     if (processingStatus === 'pending' && !processingTriggered && attempts === 0) {
                         console.log('🚀 Status è "pending" - Attivazione elaborazione...');
                         processingTriggered = true;
@@ -254,13 +253,12 @@ async function loadRefertoFromBackend(recordingId, patientId) {
                     
                     if (attempts < maxAttempts) {
                         attempts++;
-                        setTimeout(pollReferto, 5000); // Retry dopo 5 secondi
+                        setTimeout(pollReferto, 5000);
                     } else {
                         showRefertoError('Elaborazione in corso da troppo tempo. Prova a ricaricare la pagina tra poco.');
                         reject(new Error('Processing timeout'));
                     }
                 } else {
-                    // ❌ Unexpected status
                     console.warn('⚠️ Stato referto non riconosciuto:', processingStatus);
                     showRefertoError(`Stato inaspettato: ${processingStatus}. Contatta il supporto.`);
                     reject(new Error(`Invalid referto status: ${processingStatus}`));
@@ -269,7 +267,6 @@ async function loadRefertoFromBackend(recordingId, patientId) {
             } catch (error) {
                 console.warn(`⚠️ Errore polling (${attempts + 1}/${maxAttempts}):`, error.message);
                 
-                // Continua polling anche se c'è errore (potrebbe essere temporaneo)
                 if (attempts < maxAttempts) {
                     attempts++;
                     setTimeout(pollReferto, 5000);
@@ -280,7 +277,6 @@ async function loadRefertoFromBackend(recordingId, patientId) {
             }
         };
         
-        // Inizia il polling
         pollReferto();
     });
 }
@@ -290,52 +286,87 @@ async function loadRefertoFromBackend(recordingId, patientId) {
  */
 function displayRefertoComplete(refertoResponse) {
     try {
-        // Estrai dati dalla risposta - la struttura è refertoResponse.referto.referto
-        const referto = refertoResponse.referto?.referto || refertoResponse.referto || {};
-        const doctorName = refertoResponse.doctor_name || refertoResponse.doctorName || currentPatient?.doctorName || 'Dr. Professionista';
-        const patientFirstName = refertoResponse.patient?.first_name || refertoResponse.patientFirstName || currentPatient?.firstName || 'Paziente';
-        const patientLastName = refertoResponse.patient?.last_name || refertoResponse.patientLastName || currentPatient?.lastName || '';
+        console.log('🔍 DEBUG - Inizio displayRefertoComplete');
+        console.log('📦 refertoResponse ricevuto:', refertoResponse);
+        
+        // Estrai referto - gestisci sia singolo che doppio annidamento
+        let referto = {};
+        if (refertoResponse.referto) {
+            if (refertoResponse.referto.referto) {
+                referto = refertoResponse.referto.referto;
+                console.log('📌 Referto estratto da doppio annidamento (referto.referto.referto)');
+            } else {
+                referto = refertoResponse.referto;
+                console.log('📌 Referto estratto da singolo annidamento (referto.referto)');
+            }
+        }
+        
+        console.log('📋 Contenuto referto finale:', referto);
+        console.log('🔑 Chiavi del referto:', Object.keys(referto));
+        
+        const doctorName = refertoResponse.doctorName || 'Dr. Professionista';
+        const patientFirstName = currentPatient?.firstName || 'Paziente';
+        const patientLastName = currentPatient?.lastName || '';
         const patientName = (patientFirstName + ' ' + patientLastName).trim();
+        
+        console.log(`👨‍⚕️ Medico: ${doctorName}`);
+        console.log(`👤 Paziente: ${patientName}`);
         
         const today = new Date();
 
         // 1️⃣ Popola header info
         const refertoDateEl = document.getElementById('refertoDate');
         if (refertoDateEl) {
-            refertoDateEl.textContent = today.toLocaleDateString('it-IT', {
+            const dateStr = today.toLocaleDateString('it-IT', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
+            refertoDateEl.textContent = dateStr;
+            console.log(`✅ Data referto impostata: ${dateStr}`);
+        } else {
+            console.warn('⚠️ Elemento refertoDate non trovato');
         }
 
         const visitDateEl = document.getElementById('visitDate');
         if (visitDateEl) {
-            visitDateEl.textContent = today.toLocaleDateString('it-IT', {
+            const dateStr = today.toLocaleDateString('it-IT', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
+            visitDateEl.textContent = dateStr;
+            console.log(`✅ Data visita impostata: ${dateStr}`);
+        } else {
+            console.warn('⚠️ Elemento visitDate non trovato');
         }
 
         const medicoNameEl = document.getElementById('medicoName');
         if (medicoNameEl) {
             medicoNameEl.textContent = doctorName;
-            console.log(`👨‍⚕️ Nome medico impostato: ${doctorName}`);
+            console.log(`✅ Nome medico impostato: ${doctorName}`);
+        } else {
+            console.warn('⚠️ Elemento medicoName non trovato');
         }
 
         const patientNameEl = document.getElementById('patientName');
         if (patientNameEl) {
             patientNameEl.textContent = patientName || 'Paziente';
-            console.log(`👤 Nome paziente impostato: ${patientName}`);
+            console.log(`✅ Nome paziente impostato: ${patientName}`);
+        } else {
+            console.warn('⚠️ Elemento patientName non trovato');
         }
 
         // 2️⃣ Popola sezioni referto
         const anamneseText = document.getElementById('anamneseText');
         if (anamneseText) {
-            anamneseText.textContent = referto.anamnesi || 'Non specificato';
+            const content = referto.anamnesi || 'Non specificato';
+            anamneseText.textContent = content;
+            console.log(`✅ Anamnesi impostata: ${content.substring(0, 50)}...`);
+        } else {
+            console.warn('⚠️ Elemento anamneseText non trovato');
         }
 
         const esameText = document.getElementById('esameText');
@@ -351,14 +382,22 @@ function displayRefertoComplete(refertoResponse) {
                         <li><strong>Tartaro:</strong> ${esameObj.tartaro || 'Non rilevato'}</li>
                     </ul>
                 `;
+                console.log('✅ Esame obiettivo impostato (formato strutturato)');
             } else {
-                esameText.textContent = 'Non specificato';
+                esameText.textContent = referto.esame_obiettivo || 'Non specificato';
+                console.log('✅ Esame obiettivo impostato (testo)');
             }
+        } else {
+            console.warn('⚠️ Elemento esameText non trovato');
         }
 
         const diagnosiText = document.getElementById('diagnosiText');
         if (diagnosiText) {
-            diagnosiText.textContent = referto.diagnosi || 'Non specificato';
+            const content = referto.diagnosi || 'Non specificato';
+            diagnosiText.textContent = content;
+            console.log(`✅ Diagnosi impostata: ${content.substring(0, 50)}...`);
+        } else {
+            console.warn('⚠️ Elemento diagnosiText non trovato');
         }
 
         const pianoText = document.getElementById('pianoText');
@@ -373,38 +412,63 @@ function displayRefertoComplete(refertoResponse) {
                         <li><strong>Priorità:</strong> ${pianoObj.priorita || 'Non urgente'}</li>
                     </ul>
                 `;
+                console.log('✅ Piano terapeutico impostato (formato strutturato)');
             } else {
-                pianoText.textContent = 'Non specificato';
+                pianoText.textContent = referto.piano_terapeutico || 'Non specificato';
+                console.log('✅ Piano terapeutico impostato (testo)');
             }
+        } else {
+            console.warn('⚠️ Elemento pianoText non trovato');
         }
 
         const followupText = document.getElementById('followupText');
         if (followupText) {
-            followupText.textContent = referto.follow_up || 'Controllo di routine';
+            const content = referto.follow_up || 'Controllo di routine';
+            followupText.textContent = content;
+            console.log(`✅ Follow-up impostato: ${content}`);
+        } else {
+            console.warn('⚠️ Elemento followupText non trovato');
         }
 
         // 3️⃣ Firma medico
         const signatureName = document.getElementById('signatureName');
         if (signatureName) {
             signatureName.textContent = doctorName;
+            console.log('✅ Nome firma impostato');
+        } else {
+            console.warn('⚠️ Elemento signatureName non trovato');
         }
 
-        // 4️⃣ Colora odontogramma se dati disponibili
+        // 4️⃣ Colora odontogramma
         if (refertoResponse.odontogramma) {
-            console.log('🦷 Colorizzazione odontogramma...');
+            console.log('🦷 Colorizzazione odontogramma in corso...');
             colorizeOdontogramma(refertoResponse.odontogramma);
+        } else {
+            console.warn('⚠️ Dati odontogramma non disponibili');
         }
 
-        // Nascondi loading
-        const loadingEl = document.querySelector('.referto-loading');
+        // 5️⃣ Nascondi loading e mostra contenuto
+        const loadingEl = document.getElementById('loadingSpinner');
         if (loadingEl) {
             loadingEl.style.display = 'none';
+            console.log('✅ Loading nascosto');
+        } else {
+            console.warn('⚠️ Elemento loading non trovato per nascondere');
+        }
+
+        const contentEl = document.querySelector('.referto-content');
+        if (contentEl) {
+            contentEl.style.display = 'block';
+            console.log('✅ Contenuto referto reso visibile');
+        } else {
+            console.warn('⚠️ Elemento referto-content non trovato');
         }
 
         console.log('✅ Referto visualizzato completamente');
 
     } catch (error) {
         console.error('❌ Errore visualizzazione referto:', error);
+        console.error('📍 Stack trace:', error.stack);
         showRefertoError('Errore nella visualizzazione del referto: ' + error.message);
     }
 }
@@ -419,12 +483,13 @@ function colorizeOdontogramma(odontogrammaData) {
             return;
         }
 
-        // Itera sui denti se in formato { denti: { ...} } oppure { ...} diretto
+        console.log('🦷 Dati odontogramma ricevuti:', odontogrammaData);
+        console.log('🔑 Chiavi odontogramma:', Object.keys(odontogrammaData));
+
         const dentiData = odontogrammaData.denti || odontogrammaData;
         let colorizedCount = 0;
 
         for (let toothNum = 11; toothNum <= 48; toothNum++) {
-            // Skip quadrante boundaries (no tooth 19, 29, 39, 49)
             if (toothNum === 19 || toothNum === 29 || toothNum === 39 || toothNum === 49) continue;
 
             const toothId = `tooth-${toothNum}`;
@@ -435,14 +500,13 @@ function colorizeOdontogramma(odontogrammaData) {
             const toothData = dentiData[toothNum] || dentiData[String(toothNum)];
             
             if (toothData && toothData.procedure) {
-                // Rimuovi vecchie classi
                 toothElement.classList.remove('extract', 'conservativa', 'endodonzia', 'impianto', 'extract-impianto', 'endodonzia-corona');
                 
-                // Aggiungi classe procedure
                 const procedure = mapProcedure(toothData.procedure);
                 if (procedure) {
                     toothElement.classList.add(procedure);
                     colorizedCount++;
+                    console.log(`🦷 Dente ${toothNum}: ${procedure}`);
                 }
             }
         }
@@ -540,7 +604,6 @@ function savePdfReferto() {
         ? `Referto_${currentPatient.firstName}_${currentPatient.lastName}_${new Date().toISOString().slice(0,10)}.pdf`
         : `Referto_${new Date().toISOString().slice(0,10)}.pdf`;
 
-    // Usa html2pdf se disponibile, altrimenti usa print
     if (typeof html2pdf !== 'undefined') {
         const element = document.querySelector('.referto-main');
         const opt = {
@@ -553,7 +616,6 @@ function savePdfReferto() {
         html2pdf().set(opt).from(element).save();
         showNotification('✅ PDF generato con successo', 'success');
     } else {
-        // Fallback: print
         window.print();
         showNotification('📄 Apri stampa per salvare come PDF', 'info');
     }
@@ -574,7 +636,6 @@ function printReferto() {
 function sendToPatient() {
     console.log('📧 Invio referto al paziente...');
     showNotification('✅ Funzionalità in arrivo', 'info');
-    // TODO: Implementare invio email backend
 }
 
 /**
@@ -583,9 +644,6 @@ function sendToPatient() {
 function deleteReferto() {
     if (confirm('⚠️ Sei sicuro di voler eliminare questo referto? Questa azione non può essere annullata.')) {
         console.log('🗑️ Eliminazione referto...');
-        
-        // TODO: Implementare DELETE /api/recordings/:id
-        // await deleteRefertoAPI(currentRecordingId);
         
         showNotification('✅ Referto eliminato', 'success');
         setTimeout(() => {
