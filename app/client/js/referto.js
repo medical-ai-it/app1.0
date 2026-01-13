@@ -85,14 +85,25 @@ async function initializeReferto() {
 }
 
 /**
- * Mostra schermata di caricamento con spinner
+ * Mostra schermata di caricamento con spinner - NON SOVRASCRIVE L'HTML
  */
 function showRefertoLoading() {
+    const contentEl = document.querySelector('.referto-content');
+    if (contentEl) {
+        contentEl.style.display = 'none';
+        console.log('✅ Contenuto referto nascosto');
+    }
+
     const mainContent = document.querySelector('.referto-main');
     if (!mainContent) return;
 
-    mainContent.innerHTML = `
-        <div class="referto-loading" id="loadingSpinner">
+    // Crea loading overlay SENZA sovrascrivere il main
+    let loadingEl = document.getElementById('loadingSpinner');
+    if (!loadingEl) {
+        loadingEl = document.createElement('div');
+        loadingEl.id = 'loadingSpinner';
+        loadingEl.className = 'referto-loading';
+        loadingEl.innerHTML = `
             <div></div>
             <div>
                 <h2>🤖 Elaborazione referto in corso</h2>
@@ -105,18 +116,35 @@ function showRefertoLoading() {
             <div>
                 <div></div>
             </div>
-        </div>
-    `;
+        `;
+        mainContent.insertBefore(loadingEl, mainContent.firstChild);
+        console.log('✅ Loading spinner creato');
+    } else {
+        loadingEl.style.display = 'flex';
+        console.log('✅ Loading spinner mostrato');
+    }
 }
 
 /**
  * Mostra messaggio di errore
  */
 function showRefertoError(message) {
+    const contentEl = document.querySelector('.referto-content');
+    if (contentEl) {
+        contentEl.style.display = 'none';
+    }
+
     const mainContent = document.querySelector('.referto-main');
     if (!mainContent) return;
 
-    mainContent.innerHTML = `
+    let errorEl = document.getElementById('errorContainer');
+    if (!errorEl) {
+        errorEl = document.createElement('div');
+        errorEl.id = 'errorContainer';
+        mainContent.insertBefore(errorEl, mainContent.firstChild);
+    }
+
+    errorEl.innerHTML = `
         <div class="referto-error">
             <div>❌</div>
             <h2>Errore</h2>
@@ -135,6 +163,7 @@ function showRefertoError(message) {
             </button>
         </div>
     `;
+    errorEl.style.display = 'block';
 }
 
 /**
@@ -188,12 +217,6 @@ async function loadRefertoFromBackend(recordingId, patientId) {
                 
                 const response = await getReferto(recordingId);
                 console.log('📦 Risposta API completa:', response);
-                console.log('📊 Risposta API (riassunto):', {
-                    recordingId: response.recordingId,
-                    processingStatus: response.processingStatus,
-                    hasReferto: !!response.referto,
-                    hasTranscript: !!response.transcript
-                });
                 
                 const processingStatus = response.processingStatus || 'unknown';
                 const referto = response.referto;
@@ -215,21 +238,6 @@ async function loadRefertoFromBackend(recordingId, patientId) {
                     };
 
                     refertoData = response;
-
-                    console.log('🎯 Prima di displayRefertoComplete - verifico elementi DOM...');
-                    const loadingEl = document.getElementById('loadingSpinner');
-                    if (loadingEl) {
-                        console.log('✅ Elemento loading trovato');
-                    } else {
-                        console.warn('⚠️ Elemento loading non trovato');
-                    }
-                    
-                    const contentEl = document.querySelector('.referto-content');
-                    if (contentEl) {
-                        console.log('✅ Elemento referto-content trovato');
-                    } else {
-                        console.warn('⚠️ Elemento referto-content non trovato');
-                    }
 
                     displayRefertoComplete(response);
                     
@@ -287,7 +295,6 @@ async function loadRefertoFromBackend(recordingId, patientId) {
 function displayRefertoComplete(refertoResponse) {
     try {
         console.log('🔍 DEBUG - Inizio displayRefertoComplete');
-        console.log('📦 refertoResponse ricevuto:', refertoResponse);
         
         // Estrai referto - gestisci sia singolo che doppio annidamento
         let referto = {};
@@ -359,14 +366,12 @@ function displayRefertoComplete(refertoResponse) {
             console.warn('⚠️ Elemento patientName non trovato');
         }
 
-        // 2️⃣ Popola sezioni referto
+        // 2️⃣ Popola sezioni referto - GENERICA (funziona con qualsiasi struttura)
         const anamneseText = document.getElementById('anamneseText');
         if (anamneseText) {
             const content = referto.anamnesi || 'Non specificato';
             anamneseText.textContent = content;
-            console.log(`✅ Anamnesi impostata: ${content.substring(0, 50)}...`);
-        } else {
-            console.warn('⚠️ Elemento anamneseText non trovato');
+            console.log(`✅ Anamnesi impostata`);
         }
 
         const esameText = document.getElementById('esameText');
@@ -384,20 +389,16 @@ function displayRefertoComplete(refertoResponse) {
                 `;
                 console.log('✅ Esame obiettivo impostato (formato strutturato)');
             } else {
-                esameText.textContent = referto.esame_obiettivo || 'Non specificato';
+                esameText.textContent = referto.esame_obiettivo || referto.esame_intraoraleale || 'Non specificato';
                 console.log('✅ Esame obiettivo impostato (testo)');
             }
-        } else {
-            console.warn('⚠️ Elemento esameText non trovato');
         }
 
         const diagnosiText = document.getElementById('diagnosiText');
         if (diagnosiText) {
-            const content = referto.diagnosi || 'Non specificato';
+            const content = referto.diagnosi || referto.diagnosi_ortodontica || 'Non specificato';
             diagnosiText.textContent = content;
-            console.log(`✅ Diagnosi impostata: ${content.substring(0, 50)}...`);
-        } else {
-            console.warn('⚠️ Elemento diagnosiText non trovato');
+            console.log(`✅ Diagnosi impostata`);
         }
 
         const pianoText = document.getElementById('pianoText');
@@ -414,20 +415,17 @@ function displayRefertoComplete(refertoResponse) {
                 `;
                 console.log('✅ Piano terapeutico impostato (formato strutturato)');
             } else {
-                pianoText.textContent = referto.piano_terapeutico || 'Non specificato';
+                const content = referto.piano_terapeutico || referto.piano_trattamento || 'Non specificato';
+                pianoText.textContent = content;
                 console.log('✅ Piano terapeutico impostato (testo)');
             }
-        } else {
-            console.warn('⚠️ Elemento pianoText non trovato');
         }
 
         const followupText = document.getElementById('followupText');
         if (followupText) {
-            const content = referto.follow_up || 'Controllo di routine';
+            const content = referto.follow_up || referto.prognosi || 'Controllo di routine';
             followupText.textContent = content;
-            console.log(`✅ Follow-up impostato: ${content}`);
-        } else {
-            console.warn('⚠️ Elemento followupText non trovato');
+            console.log(`✅ Follow-up impostato`);
         }
 
         // 3️⃣ Firma medico
@@ -435,8 +433,6 @@ function displayRefertoComplete(refertoResponse) {
         if (signatureName) {
             signatureName.textContent = doctorName;
             console.log('✅ Nome firma impostato');
-        } else {
-            console.warn('⚠️ Elemento signatureName non trovato');
         }
 
         // 4️⃣ Colora odontogramma
@@ -452,8 +448,6 @@ function displayRefertoComplete(refertoResponse) {
         if (loadingEl) {
             loadingEl.style.display = 'none';
             console.log('✅ Loading nascosto');
-        } else {
-            console.warn('⚠️ Elemento loading non trovato per nascondere');
         }
 
         const contentEl = document.querySelector('.referto-content');
