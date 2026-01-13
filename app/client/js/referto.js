@@ -97,7 +97,6 @@ function showRefertoLoading() {
     const mainContent = document.querySelector('.referto-main');
     if (!mainContent) return;
 
-    // Crea loading overlay SENZA sovrascrivere il main
     let loadingEl = document.getElementById('loadingSpinner');
     if (!loadingEl) {
         loadingEl = document.createElement('div');
@@ -226,16 +225,17 @@ async function loadRefertoFromBackend(recordingId, patientId) {
                     console.log('✅ Referto caricato dal backend');
                     console.log('🔍 Struttura referto ricevuta:', {
                         keys: Object.keys(referto),
-                        hasAnamnesi: !!referto.anamnesi,
-                        hasDiagnosi: !!referto.diagnosi
                     });
                     
+                    // IMPORTANTE: Aggiorna currentPatient con i dati dal backend
                     currentPatient = {
-                        id: patientId,
+                        id: response.patientId || patientId,
                         firstName: response.patientFirstName || 'Paziente',
                         lastName: response.patientLastName || '',
                         doctorName: response.doctorName || 'Dr. Professionista'
                     };
+
+                    console.log('👤 Patient data:', currentPatient);
 
                     refertoData = response;
 
@@ -296,24 +296,24 @@ function displayRefertoComplete(refertoResponse) {
     try {
         console.log('🔍 DEBUG - Inizio displayRefertoComplete');
         
-        // Estrai referto - gestisci sia singolo che doppio annidamento
+        // Estrai referto
         let referto = {};
         if (refertoResponse.referto) {
             if (refertoResponse.referto.referto) {
                 referto = refertoResponse.referto.referto;
-                console.log('📌 Referto estratto da doppio annidamento (referto.referto.referto)');
+                console.log('📌 Referto estratto da doppio annidamento');
             } else {
                 referto = refertoResponse.referto;
-                console.log('📌 Referto estratto da singolo annidamento (referto.referto)');
+                console.log('📌 Referto estratto da singolo annidamento');
             }
         }
         
         console.log('📋 Contenuto referto finale:', referto);
         console.log('🔑 Chiavi del referto:', Object.keys(referto));
         
-        const doctorName = refertoResponse.doctorName || 'Dr. Professionista';
-        const patientFirstName = currentPatient?.firstName || 'Paziente';
-        const patientLastName = currentPatient?.lastName || '';
+        const doctorName = refertoResponse.doctorName || currentPatient?.doctorName || 'Dr. Professionista';
+        const patientFirstName = refertoResponse.patientFirstName || currentPatient?.firstName || 'Paziente';
+        const patientLastName = refertoResponse.patientLastName || currentPatient?.lastName || '';
         const patientName = (patientFirstName + ' ' + patientLastName).trim();
         
         console.log(`👨‍⚕️ Medico: ${doctorName}`);
@@ -331,9 +331,7 @@ function displayRefertoComplete(refertoResponse) {
                 day: 'numeric'
             });
             refertoDateEl.textContent = dateStr;
-            console.log(`✅ Data referto impostata: ${dateStr}`);
-        } else {
-            console.warn('⚠️ Elemento refertoDate non trovato');
+            console.log(`✅ Data referto impostata`);
         }
 
         const visitDateEl = document.getElementById('visitDate');
@@ -345,86 +343,85 @@ function displayRefertoComplete(refertoResponse) {
                 day: 'numeric'
             });
             visitDateEl.textContent = dateStr;
-            console.log(`✅ Data visita impostata: ${dateStr}`);
-        } else {
-            console.warn('⚠️ Elemento visitDate non trovato');
+            console.log(`✅ Data visita impostata`);
         }
 
         const medicoNameEl = document.getElementById('medicoName');
         if (medicoNameEl) {
             medicoNameEl.textContent = doctorName;
-            console.log(`✅ Nome medico impostato: ${doctorName}`);
-        } else {
-            console.warn('⚠️ Elemento medicoName non trovato');
+            console.log(`✅ Nome medico impostato`);
         }
 
         const patientNameEl = document.getElementById('patientName');
         if (patientNameEl) {
-            patientNameEl.textContent = patientName || 'Paziente';
+            patientNameEl.textContent = patientName;
             console.log(`✅ Nome paziente impostato: ${patientName}`);
-        } else {
-            console.warn('⚠️ Elemento patientName non trovato');
         }
 
-        // 2️⃣ Popola sezioni referto - GENERICA (funziona con qualsiasi struttura)
+        // 2️⃣ Popola sezioni referto - DINAMICO
         const anamneseText = document.getElementById('anamneseText');
         if (anamneseText) {
-            const content = referto.anamnesi || 'Non specificato';
+            // Supporta anamnesi, anamnesi_parodontale, etc.
+            const content = findFieldValue(referto, ['anamnesi', 'anamnesi_parodontale', 'anamnesi_ortodontica']) || 'Non specificato';
             anamneseText.textContent = content;
             console.log(`✅ Anamnesi impostata`);
         }
 
         const esameText = document.getElementById('esameText');
         if (esameText) {
-            if (referto.esame_obiettivo && typeof referto.esame_obiettivo === 'object') {
-                const esameObj = referto.esame_obiettivo;
-                esameText.innerHTML = `
-                    <ul>
-                        <li><strong>Igiene orale:</strong> ${esameObj.igiene_orale || 'Non specificato'}</li>
-                        <li><strong>Carie:</strong> ${esameObj.carie || 'Non specificate'}</li>
-                        <li><strong>Denti mancanti:</strong> ${esameObj.denti_mancanti || 'Nessuno'}</li>
-                        <li><strong>Gengivite/Parodontite:</strong> ${esameObj.gengivite_parodontite || 'Non specificato'}</li>
-                        <li><strong>Tartaro:</strong> ${esameObj.tartaro || 'Non rilevato'}</li>
-                    </ul>
-                `;
-                console.log('✅ Esame obiettivo impostato (formato strutturato)');
+            const content = findFieldValue(referto, [
+                'esame_obiettivo',
+                'esame_intraoraleale',
+                'indici_parodontali',
+                'analisi_radiografica'
+            ]) || 'Non specificato';
+            
+            if (typeof content === 'object') {
+                esameText.innerHTML = `<ul>${Object.entries(content)
+                    .map(([k, v]) => `<li><strong>${formatFieldName(k)}:</strong> ${v || 'Non specificato'}</li>`)
+                    .join('')}</ul>`;
             } else {
-                esameText.textContent = referto.esame_obiettivo || referto.esame_intraoraleale || 'Non specificato';
-                console.log('✅ Esame obiettivo impostato (testo)');
+                esameText.textContent = content;
             }
+            console.log(`✅ Esame impostato`);
         }
 
         const diagnosiText = document.getElementById('diagnosiText');
         if (diagnosiText) {
-            const content = referto.diagnosi || referto.diagnosi_ortodontica || 'Non specificato';
-            diagnosiText.textContent = content;
+            const content = findFieldValue(referto, [
+                'diagnosi',
+                'diagnosi_parodontale',
+                'diagnosi_ortodontica'
+            ]) || 'Non specificato';
+            diagnosiText.textContent = typeof content === 'object' ? JSON.stringify(content) : content;
             console.log(`✅ Diagnosi impostata`);
         }
 
         const pianoText = document.getElementById('pianoText');
         if (pianoText) {
-            if (referto.piano_terapeutico && typeof referto.piano_terapeutico === 'object') {
-                const pianoObj = referto.piano_terapeutico;
-                pianoText.innerHTML = `
-                    <ul>
-                        <li><strong>Igiene professionale:</strong> ${pianoObj.igiene_professionale ? 'Consigliata' : 'Non necessaria'}</li>
-                        <li><strong>Cure necessarie:</strong> ${pianoObj.cure_necessarie && Object.keys(pianoObj.cure_necessarie).length > 0 ? 'Vedi dettagli quadranti' : 'Nessuna'}</li>
-                        <li><strong>Protesi/Impianti:</strong> ${pianoObj.protesi_impianti || 'Non necessari'}</li>
-                        <li><strong>Priorità:</strong> ${pianoObj.priorita || 'Non urgente'}</li>
-                    </ul>
-                `;
-                console.log('✅ Piano terapeutico impostato (formato strutturato)');
+            const content = findFieldValue(referto, [
+                'piano_terapeutico',
+                'piano_trattamento'
+            ]) || 'Non specificato';
+            
+            if (typeof content === 'object') {
+                pianoText.innerHTML = `<ul>${Object.entries(content)
+                    .map(([k, v]) => `<li><strong>${formatFieldName(k)}:</strong> ${v || 'Non specificato'}</li>`)
+                    .join('')}</ul>`;
             } else {
-                const content = referto.piano_terapeutico || referto.piano_trattamento || 'Non specificato';
                 pianoText.textContent = content;
-                console.log('✅ Piano terapeutico impostato (testo)');
             }
+            console.log(`✅ Piano impostato`);
         }
 
         const followupText = document.getElementById('followupText');
         if (followupText) {
-            const content = referto.follow_up || referto.prognosi || 'Controllo di routine';
-            followupText.textContent = content;
+            const content = findFieldValue(referto, [
+                'follow_up',
+                'prognosi',
+                'istruzioni_igieniche'
+            ]) || 'Controllo di routine';
+            followupText.textContent = typeof content === 'object' ? JSON.stringify(content) : content;
             console.log(`✅ Follow-up impostato`);
         }
 
@@ -439,8 +436,6 @@ function displayRefertoComplete(refertoResponse) {
         if (refertoResponse.odontogramma) {
             console.log('🦷 Colorizzazione odontogramma in corso...');
             colorizeOdontogramma(refertoResponse.odontogramma);
-        } else {
-            console.warn('⚠️ Dati odontogramma non disponibili');
         }
 
         // 5️⃣ Nascondi loading e mostra contenuto
@@ -454,8 +449,6 @@ function displayRefertoComplete(refertoResponse) {
         if (contentEl) {
             contentEl.style.display = 'block';
             console.log('✅ Contenuto referto reso visibile');
-        } else {
-            console.warn('⚠️ Elemento referto-content non trovato');
         }
 
         console.log('✅ Referto visualizzato completamente');
@@ -465,6 +458,27 @@ function displayRefertoComplete(refertoResponse) {
         console.error('📍 Stack trace:', error.stack);
         showRefertoError('Errore nella visualizzazione del referto: ' + error.message);
     }
+}
+
+/**
+ * Trova il valore di un campo cercando tra varie chiavi possibili
+ */
+function findFieldValue(obj, possibleKeys) {
+    for (const key of possibleKeys) {
+        if (obj[key] !== undefined && obj[key] !== null) {
+            return obj[key];
+        }
+    }
+    return null;
+}
+
+/**
+ * Formatta il nome di un campo per visualizzazione leggibile
+ */
+function formatFieldName(str) {
+    return str
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, char => char.toUpperCase());
 }
 
 /**
@@ -478,7 +492,6 @@ function colorizeOdontogramma(odontogrammaData) {
         }
 
         console.log('🦷 Dati odontogramma ricevuti:', odontogrammaData);
-        console.log('🔑 Chiavi odontogramma:', Object.keys(odontogrammaData));
 
         const dentiData = odontogrammaData.denti || odontogrammaData;
         let colorizedCount = 0;
@@ -500,7 +513,6 @@ function colorizeOdontogramma(odontogrammaData) {
                 if (procedure) {
                     toothElement.classList.add(procedure);
                     colorizedCount++;
-                    console.log(`🦷 Dente ${toothNum}: ${procedure}`);
                 }
             }
         }
