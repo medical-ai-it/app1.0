@@ -1226,7 +1226,6 @@ app.post('/api/recordings', async (req, res) => {
       try {
         saveAudioFile(audio_data, audioFilename);
         
-        // ✅ AGGIORNATO: Genera URL ASSOLUTO in base all'ambiente
         audioUrl = `${getBaseUrl()}/api/uploads/recordings/${audioFilename}`;
         console.log(`✅ Audio file saved with absolute URL: ${audioUrl}`);
       } catch (error) {
@@ -1259,7 +1258,7 @@ app.post('/api/recordings', async (req, res) => {
   }
 });
 
-// ✅ POST /api/recordings/:id/process - AGGIORNATO CON LOGGING DETTAGLIATO
+// ✅ POST /api/recordings/:id/process
 app.post('/api/recordings/:id/process', async (req, res) => {
   let connection;
   try {
@@ -1441,6 +1440,7 @@ app.post('/api/recordings/:id/process', async (req, res) => {
   }
 });
 
+// ✅ GET /api/recordings/:id/referto - AGGIORNATO CON LEFT JOIN PER PATIENTS
 app.get('/api/recordings/:id/referto', async (req, res) => {
   let connection;
   try {
@@ -1448,8 +1448,13 @@ app.get('/api/recordings/:id/referto', async (req, res) => {
 
     connection = await pool.getConnection();
     const [recordings] = await connection.query(
-      `SELECT id, patient_id, visit_type, doctor_name, transcript, referto_data, odontogramma_data, processing_status, created_at
-       FROM recordings WHERE id = ? AND status != "deleted"`,
+      `SELECT 
+        r.id, r.patient_id, r.visit_type, r.doctor_name, r.transcript, 
+        r.referto_data, r.odontogramma_data, r.processing_status, r.created_at,
+        p.first_name, p.last_name
+       FROM recordings r
+       LEFT JOIN patients p ON r.patient_id = p.id
+       WHERE r.id = ? AND r.status != "deleted"`,
       [recordingId]
     );
 
@@ -1467,6 +1472,8 @@ app.get('/api/recordings/:id/referto', async (req, res) => {
       success: true,
       recordingId: recording.id,
       patientId: recording.patient_id,
+      patientFirstName: recording.first_name || null,
+      patientLastName: recording.last_name || null,
       visitType: recording.visit_type,
       doctorName: recording.doctor_name || null,
       transcript: recording.transcript || null,
