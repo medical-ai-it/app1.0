@@ -20,6 +20,9 @@
         _iub.cons_instructions.push(["init", {api_key: "1u2NW5lmpLpqkAau4IorkrcoS9VqavmV"}]);
     </script>
     <script type="text/javascript" src="https://cdn.iubenda.com/cons/iubenda_cons.js" async></script>
+
+    <!-- PDF export library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div id="app">
@@ -34,253 +37,323 @@
 
                 <!-- Main Content -->
                 <main class="referto-main">
-                    <div class="referto-content">
-                        <!-- Page Header with Actions -->
-                        <div class="page-header">
-                            <div class="header-top">
-                                <h2>Referto Appuntamento</h2>
-                                <div class="referto-actions">
-                                    <button id="savePdfBtn" class="btn-referto btn-primary-color" onclick="savePdfReferto()" title="Salva come PDF">
-                                        <i class="fas fa-file-pdf"></i>
-                                        <span>Salva PDF</span>
-                                    </button>
-                                    <button id="printBtn" class="btn-referto btn-primary-color" onclick="printReferto()" title="Stampa">
-                                        <i class="fas fa-print"></i>
-                                        <span>Stampa</span>
-                                    </button>
-                                    <button id="sendPatientBtn" class="btn-referto btn-primary-color" onclick="sendToPatient()" title="Invia al Paziente">
-                                        <i class="fas fa-envelope"></i>
-                                        <span>Invia al Paziente</span>
-                                    </button>
-                                    <button id="deleteBtn" class="btn-referto btn-danger-color" onclick="deleteReferto()" title="Elimina Referto">
-                                        <i class="fas fa-trash-alt"></i>
-                                        <span>Elimina</span>
-                                    </button>
-                                </div>
+                    <!-- ====================================================================== -->
+                    <!-- PAGE HEADER WITH ACTIONS -->
+                    <!-- ====================================================================== -->
+                    <div class="page-header">
+                        <div class="header-top">
+                            <h2>📄 Referto Appuntamento - Schema 2.0</h2>
+                            <div class="referto-actions">
+                                <button id="savePdfBtn" class="btn-referto btn-primary-color" onclick="savePdfReferto()" title="Salva come PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span>Salva PDF</span>
+                                </button>
+                                <button id="printBtn" class="btn-referto btn-primary-color" onclick="printReferto()" title="Stampa">
+                                    <i class="fas fa-print"></i>
+                                    <span>Stampa</span>
+                                </button>
+                                <button id="sendPatientBtn" class="btn-referto btn-primary-color" onclick="sendToPatient()" title="Invia al Paziente">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Invia al Paziente</span>
+                                </button>
+                                <button id="deleteBtn" class="btn-referto btn-danger-color" onclick="deleteReferto()" title="Elimina Referto">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>Elimina</span>
+                                </button>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Referto Header Info -->
+                    <!-- ====================================================================== -->
+                    <!-- REFERTO CONTENT CONTAINER -->
+                    <!-- ====================================================================== -->
+                    <div class="referto-content">
+
+                        <!-- REFERTO HEADER INFO -->
                         <div class="referto-header">
                             <div class="referto-info">
                                 <div class="info-item">
-                                    <label>Data Referto:</label>
+                                    <label>📅 Data Referto:</label>
                                     <span id="refertoDate">--/--/----</span>
                                 </div>
                                 <div class="info-item">
-                                    <label>Data Visita:</label>
+                                    <label>📋 Data Visita:</label>
                                     <span id="visitDate">--/--/----</span>
                                 </div>
                                 <div class="info-item">
-                                    <label>Medico:</label>
+                                    <label>👨‍⚕️ Medico:</label>
                                     <span id="medicoName">Dr. Professionista</span>
                                 </div>
                                 <div class="info-item">
-                                    <label>Paziente:</label>
+                                    <label>👤 Paziente:</label>
                                     <span id="patientName">Nome Paziente</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Odontogramma Section -->
+                        <!-- ====================================================================== -->
+                        <!-- ODONTOGRAMMA COLORATO STANDARDIZZATO -->
+                        <!-- ====================================================================== -->
                         <div class="referto-card odontogramma-section">
-                            <h3>Odontogramma</h3>
+                            <h3>🦷 Odontogramma Colorato - Schema Standardizzato</h3>
+                            
+                            <!-- SVG Odontogramma -->
                             <div class="odontogramma-container">
-                                <svg id="odontogramma" width="100%" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Quadrante 1 (Superiore Destro) -->
+                                <svg id="odontogramma" width="100%" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" style="border: 1px solid #ddd; border-radius: 4px; background: white;">
+                                    <!-- Divider line -->
+                                    <line x1="0" y1="150" x2="800" y2="150" stroke="#999" stroke-width="2" stroke-dasharray="5,5"/>
+
+                                    <!-- ============ QUADRANTE 1 (Superiore Destro) ============ -->
                                     <g id="quadrant-1" class="quadrant">
-                                        <text x="650" y="30" font-size="16" font-weight="bold" fill="#666">QUAD 1</text>
-                                        <rect id="tooth-18" x="650" y="50" width="30" height="40" class="tooth" data-tooth="18"></rect>
-                                        <text x="665" y="75" font-size="10" text-anchor="middle" fill="#000">18</text>
+                                        <text x="750" y="30" font-size="14" font-weight="bold" fill="#666">Q1</text>
                                         
-                                        <rect id="tooth-17" x="610" y="50" width="30" height="40" class="tooth" data-tooth="17"></rect>
-                                        <text x="625" y="75" font-size="10" text-anchor="middle" fill="#000">17</text>
+                                        <!-- Denti 1.8 - 1.1 (da destra a sinistra) -->
+                                        <rect id="tooth-18" x="650" y="50" width="30" height="40" class="tooth" data-tooth="1.8" data-fdi="1.8"></rect>
+                                        <text x="665" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">1.8</text>
                                         
-                                        <rect id="tooth-16" x="570" y="50" width="30" height="40" class="tooth" data-tooth="16"></rect>
-                                        <text x="585" y="75" font-size="10" text-anchor="middle" fill="#000">16</text>
+                                        <rect id="tooth-17" x="610" y="50" width="30" height="40" class="tooth" data-tooth="1.7" data-fdi="1.7"></rect>
+                                        <text x="625" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">1.7</text>
                                         
-                                        <rect id="tooth-15" x="530" y="50" width="30" height="40" class="tooth" data-tooth="15"></rect>
-                                        <text x="545" y="75" font-size="10" text-anchor="middle" fill="#000">15</text>
+                                        <rect id="tooth-16" x="570" y="50" width="30" height="40" class="tooth" data-tooth="1.6" data-fdi="1.6"></rect>
+                                        <text x="585" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">1.6</text>
                                         
-                                        <rect id="tooth-14" x="490" y="50" width="30" height="40" class="tooth" data-tooth="14"></rect>
-                                        <text x="505" y="75" font-size="10" text-anchor="middle" fill="#000">14</text>
+                                        <rect id="tooth-15" x="530" y="50" width="30" height="40" class="tooth" data-tooth="1.5" data-fdi="1.5"></rect>
+                                        <text x="545" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">1.5</text>
                                         
-                                        <rect id="tooth-13" x="450" y="50" width="30" height="40" class="tooth" data-tooth="13"></rect>
-                                        <text x="465" y="75" font-size="10" text-anchor="middle" fill="#000">13</text>
+                                        <rect id="tooth-14" x="490" y="50" width="30" height="40" class="tooth" data-tooth="1.4" data-fdi="1.4"></rect>
+                                        <text x="505" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">1.4</text>
                                         
-                                        <rect id="tooth-12" x="410" y="50" width="30" height="40" class="tooth" data-tooth="12"></rect>
-                                        <text x="425" y="75" font-size="10" text-anchor="middle" fill="#000">12</text>
+                                        <rect id="tooth-13" x="450" y="50" width="30" height="40" class="tooth" data-tooth="1.3" data-fdi="1.3"></rect>
+                                        <text x="465" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">1.3</text>
                                         
-                                        <rect id="tooth-11" x="370" y="50" width="30" height="40" class="tooth" data-tooth="11"></rect>
-                                        <text x="385" y="75" font-size="10" text-anchor="middle" fill="#000">11</text>
+                                        <rect id="tooth-12" x="410" y="50" width="30" height="40" class="tooth" data-tooth="1.2" data-fdi="1.2"></rect>
+                                        <text x="425" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">1.2</text>
+                                        
+                                        <rect id="tooth-11" x="370" y="50" width="30" height="40" class="tooth" data-tooth="1.1" data-fdi="1.1"></rect>
+                                        <text x="385" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">1.1</text>
                                     </g>
 
-                                    <!-- Quadrante 2 (Superiore Sinistro) -->
+                                    <!-- ============ QUADRANTE 2 (Superiore Sinistro) ============ -->
                                     <g id="quadrant-2" class="quadrant">
-                                        <text x="120" y="30" font-size="16" font-weight="bold" fill="#666">QUAD 2</text>
-                                        <rect id="tooth-21" x="370" y="50" width="30" height="40" class="tooth" data-tooth="21"></rect>
-                                        <text x="385" y="75" font-size="10" text-anchor="middle" fill="#000">21</text>
+                                        <text x="50" y="30" font-size="14" font-weight="bold" fill="#666">Q2</text>
                                         
-                                        <rect id="tooth-22" x="330" y="50" width="30" height="40" class="tooth" data-tooth="22"></rect>
-                                        <text x="345" y="75" font-size="10" text-anchor="middle" fill="#000">22</text>
+                                        <!-- Denti 2.1 - 2.8 (da sinistra a destra) -->
+                                        <rect id="tooth-21" x="90" y="50" width="30" height="40" class="tooth" data-tooth="2.1" data-fdi="2.1"></rect>
+                                        <text x="105" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">2.1</text>
                                         
-                                        <rect id="tooth-23" x="290" y="50" width="30" height="40" class="tooth" data-tooth="23"></rect>
-                                        <text x="305" y="75" font-size="10" text-anchor="middle" fill="#000">23</text>
+                                        <rect id="tooth-22" x="130" y="50" width="30" height="40" class="tooth" data-tooth="2.2" data-fdi="2.2"></rect>
+                                        <text x="145" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">2.2</text>
                                         
-                                        <rect id="tooth-24" x="250" y="50" width="30" height="40" class="tooth" data-tooth="24"></rect>
-                                        <text x="265" y="75" font-size="10" text-anchor="middle" fill="#000">24</text>
+                                        <rect id="tooth-23" x="170" y="50" width="30" height="40" class="tooth" data-tooth="2.3" data-fdi="2.3"></rect>
+                                        <text x="185" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">2.3</text>
                                         
-                                        <rect id="tooth-25" x="210" y="50" width="30" height="40" class="tooth" data-tooth="25"></rect>
-                                        <text x="225" y="75" font-size="10" text-anchor="middle" fill="#000">25</text>
+                                        <rect id="tooth-24" x="210" y="50" width="30" height="40" class="tooth" data-tooth="2.4" data-fdi="2.4"></rect>
+                                        <text x="225" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">2.4</text>
                                         
-                                        <rect id="tooth-26" x="170" y="50" width="30" height="40" class="tooth" data-tooth="26"></rect>
-                                        <text x="185" y="75" font-size="10" text-anchor="middle" fill="#000">26</text>
+                                        <rect id="tooth-25" x="250" y="50" width="30" height="40" class="tooth" data-tooth="2.5" data-fdi="2.5"></rect>
+                                        <text x="265" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">2.5</text>
                                         
-                                        <rect id="tooth-27" x="130" y="50" width="30" height="40" class="tooth" data-tooth="27"></rect>
-                                        <text x="145" y="75" font-size="10" text-anchor="middle" fill="#000">27</text>
+                                        <rect id="tooth-26" x="290" y="50" width="30" height="40" class="tooth" data-tooth="2.6" data-fdi="2.6"></rect>
+                                        <text x="305" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">2.6</text>
                                         
-                                        <rect id="tooth-28" x="90" y="50" width="30" height="40" class="tooth" data-tooth="28"></rect>
-                                        <text x="105" y="75" font-size="10" text-anchor="middle" fill="#000">28</text>
+                                        <rect id="tooth-27" x="330" y="50" width="30" height="40" class="tooth" data-tooth="2.7" data-fdi="2.7"></rect>
+                                        <text x="345" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">2.7</text>
+                                        
+                                        <rect id="tooth-28" x="370" y="50" width="30" height="40" class="tooth" data-tooth="2.8" data-fdi="2.8"></rect>
+                                        <text x="385" y="75" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">2.8</text>
                                     </g>
 
-                                    <!-- Quadrante 3 (Inferiore Sinistro) -->
+                                    <!-- ============ QUADRANTE 3 (Inferiore Sinistro) ============ -->
                                     <g id="quadrant-3" class="quadrant">
-                                        <text x="120" y="270" font-size="16" font-weight="bold" fill="#666">QUAD 3</text>
-                                        <rect id="tooth-31" x="370" y="210" width="30" height="40" class="tooth" data-tooth="31"></rect>
-                                        <text x="385" y="235" font-size="10" text-anchor="middle" fill="#000">31</text>
+                                        <text x="50" y="290" font-size="14" font-weight="bold" fill="#666">Q3</text>
                                         
-                                        <rect id="tooth-32" x="330" y="210" width="30" height="40" class="tooth" data-tooth="32"></rect>
-                                        <text x="345" y="235" font-size="10" text-anchor="middle" fill="#000">32</text>
+                                        <!-- Denti 3.1 - 3.8 (da sinistra a destra) -->
+                                        <rect id="tooth-31" x="90" y="210" width="30" height="40" class="tooth" data-tooth="3.1" data-fdi="3.1"></rect>
+                                        <text x="105" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">3.1</text>
                                         
-                                        <rect id="tooth-33" x="290" y="210" width="30" height="40" class="tooth" data-tooth="33"></rect>
-                                        <text x="305" y="235" font-size="10" text-anchor="middle" fill="#000">33</text>
+                                        <rect id="tooth-32" x="130" y="210" width="30" height="40" class="tooth" data-tooth="3.2" data-fdi="3.2"></rect>
+                                        <text x="145" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">3.2</text>
                                         
-                                        <rect id="tooth-34" x="250" y="210" width="30" height="40" class="tooth" data-tooth="34"></rect>
-                                        <text x="265" y="235" font-size="10" text-anchor="middle" fill="#000">34</text>
+                                        <rect id="tooth-33" x="170" y="210" width="30" height="40" class="tooth" data-tooth="3.3" data-fdi="3.3"></rect>
+                                        <text x="185" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">3.3</text>
                                         
-                                        <rect id="tooth-35" x="210" y="210" width="30" height="40" class="tooth" data-tooth="35"></rect>
-                                        <text x="225" y="235" font-size="10" text-anchor="middle" fill="#000">35</text>
+                                        <rect id="tooth-34" x="210" y="210" width="30" height="40" class="tooth" data-tooth="3.4" data-fdi="3.4"></rect>
+                                        <text x="225" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">3.4</text>
                                         
-                                        <rect id="tooth-36" x="170" y="210" width="30" height="40" class="tooth" data-tooth="36"></rect>
-                                        <text x="185" y="235" font-size="10" text-anchor="middle" fill="#000">36</text>
+                                        <rect id="tooth-35" x="250" y="210" width="30" height="40" class="tooth" data-tooth="3.5" data-fdi="3.5"></rect>
+                                        <text x="265" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">3.5</text>
                                         
-                                        <rect id="tooth-37" x="130" y="210" width="30" height="40" class="tooth" data-tooth="37"></rect>
-                                        <text x="145" y="235" font-size="10" text-anchor="middle" fill="#000">37</text>
+                                        <rect id="tooth-36" x="290" y="210" width="30" height="40" class="tooth" data-tooth="3.6" data-fdi="3.6"></rect>
+                                        <text x="305" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">3.6</text>
                                         
-                                        <rect id="tooth-38" x="90" y="210" width="30" height="40" class="tooth" data-tooth="38"></rect>
-                                        <text x="105" y="235" font-size="10" text-anchor="middle" fill="#000">38</text>
+                                        <rect id="tooth-37" x="330" y="210" width="30" height="40" class="tooth" data-tooth="3.7" data-fdi="3.7"></rect>
+                                        <text x="345" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">3.7</text>
+                                        
+                                        <rect id="tooth-38" x="370" y="210" width="30" height="40" class="tooth" data-tooth="3.8" data-fdi="3.8"></rect>
+                                        <text x="385" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">3.8</text>
                                     </g>
 
-                                    <!-- Quadrante 4 (Inferiore Destro) -->
+                                    <!-- ============ QUADRANTE 4 (Inferiore Destro) ============ -->
                                     <g id="quadrant-4" class="quadrant">
-                                        <text x="650" y="270" font-size="16" font-weight="bold" fill="#666">QUAD 4</text>
-                                        <rect id="tooth-41" x="370" y="210" width="30" height="40" class="tooth" data-tooth="41"></rect>
-                                        <text x="385" y="235" font-size="10" text-anchor="middle" fill="#000">41</text>
+                                        <text x="750" y="290" font-size="14" font-weight="bold" fill="#666">Q4</text>
                                         
-                                        <rect id="tooth-42" x="410" y="210" width="30" height="40" class="tooth" data-tooth="42"></rect>
-                                        <text x="425" y="235" font-size="10" text-anchor="middle" fill="#000">42</text>
+                                        <!-- Denti 4.1 - 4.8 (da destra a sinistra) -->
+                                        <rect id="tooth-41" x="370" y="210" width="30" height="40" class="tooth" data-tooth="4.1" data-fdi="4.1"></rect>
+                                        <text x="385" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">4.1</text>
                                         
-                                        <rect id="tooth-43" x="450" y="210" width="30" height="40" class="tooth" data-tooth="43"></rect>
-                                        <text x="465" y="235" font-size="10" text-anchor="middle" fill="#000">43</text>
+                                        <rect id="tooth-42" x="410" y="210" width="30" height="40" class="tooth" data-tooth="4.2" data-fdi="4.2"></rect>
+                                        <text x="425" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">4.2</text>
                                         
-                                        <rect id="tooth-44" x="490" y="210" width="30" height="40" class="tooth" data-tooth="44"></rect>
-                                        <text x="505" y="235" font-size="10" text-anchor="middle" fill="#000">44</text>
+                                        <rect id="tooth-43" x="450" y="210" width="30" height="40" class="tooth" data-tooth="4.3" data-fdi="4.3"></rect>
+                                        <text x="465" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">4.3</text>
                                         
-                                        <rect id="tooth-45" x="530" y="210" width="30" height="40" class="tooth" data-tooth="45"></rect>
-                                        <text x="545" y="235" font-size="10" text-anchor="middle" fill="#000">45</text>
+                                        <rect id="tooth-44" x="490" y="210" width="30" height="40" class="tooth" data-tooth="4.4" data-fdi="4.4"></rect>
+                                        <text x="505" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">4.4</text>
                                         
-                                        <rect id="tooth-46" x="570" y="210" width="30" height="40" class="tooth" data-tooth="46"></rect>
-                                        <text x="585" y="235" font-size="10" text-anchor="middle" fill="#000">46</text>
+                                        <rect id="tooth-45" x="530" y="210" width="30" height="40" class="tooth" data-tooth="4.5" data-fdi="4.5"></rect>
+                                        <text x="545" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">4.5</text>
                                         
-                                        <rect id="tooth-47" x="610" y="210" width="30" height="40" class="tooth" data-tooth="47"></rect>
-                                        <text x="625" y="235" font-size="10" text-anchor="middle" fill="#000">47</text>
+                                        <rect id="tooth-46" x="570" y="210" width="30" height="40" class="tooth" data-tooth="4.6" data-fdi="4.6"></rect>
+                                        <text x="585" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">4.6</text>
                                         
-                                        <rect id="tooth-48" x="650" y="210" width="30" height="40" class="tooth" data-tooth="48"></rect>
-                                        <text x="665" y="235" font-size="10" text-anchor="middle" fill="#000">48</text>
+                                        <rect id="tooth-47" x="610" y="210" width="30" height="40" class="tooth" data-tooth="4.7" data-fdi="4.7"></rect>
+                                        <text x="625" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">4.7</text>
+                                        
+                                        <rect id="tooth-48" x="650" y="210" width="30" height="40" class="tooth" data-tooth="4.8" data-fdi="4.8"></rect>
+                                        <text x="665" y="235" font-size="10" text-anchor="middle" fill="#000" pointer-events="none">4.8</text>
                                     </g>
                                 </svg>
                             </div>
 
                             <!-- Odontogramma Legend -->
-                            <div class="odontogramma-legend">
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #2196F3;"></div>
-                                    <span>Denti da estrarre</span>
+                            <div id="odontogrammaLegenda" class="odontogramma-legend"></div>
+                        </div>
+
+                        <!-- ====================================================================== -->
+                        <!-- ANAMNESI CLINICA SEZIONE -->
+                        <!-- ====================================================================== -->
+                        <div class="referto-card anamnesi-section">
+                            <h3>📋 Anamnesi Clinica</h3>
+                            
+                            <div class="anamnesi-grid">
+                                <div class="anamnesi-item">
+                                    <h4>✅ Valutazione Iniziale della Bocca</h4>
+                                    <div id="valutazioneIniziale" class="anamnesi-content"></div>
                                 </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #FFC107;"></div>
-                                    <span>Conservativa</span>
+
+                                <div class="anamnesi-item">
+                                    <h4>✅ Condizioni Dentali</h4>
+                                    <div id="conditioniDentali" class="anamnesi-content"></div>
                                 </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #F44336;"></div>
-                                    <span>Endodonzia</span>
+
+                                <div class="anamnesi-item">
+                                    <h4>✅ Condizioni Protesiche</h4>
+                                    <div id="conditioniProtesiche" class="anamnesi-content"></div>
                                 </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #4CAF50;"></div>
-                                    <span>Impianto + Corona</span>
+
+                                <div class="anamnesi-item">
+                                    <h4>📋 Condizioni Parodontali</h4>
+                                    <div id="conditioniParodontali" class="anamnesi-content"></div>
                                 </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #9C27B0;"></div>
-                                    <span>Estrazione + Impianto</span>
+
+                                <div class="anamnesi-item">
+                                    <h4>🔍 Condizioni Mucosali</h4>
+                                    <div id="conditioniMucosali" class="anamnesi-content"></div>
                                 </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #FF9800;"></div>
-                                    <span>Endodonzia + Corona</span>
+
+                                <div class="anamnesi-item">
+                                    <h4>👄 Condizioni Occlusali</h4>
+                                    <div id="conditioniOcclusali" class="anamnesi-content"></div>
                                 </div>
+
+                                <div class="anamnesi-item">
+                                    <h4>✨ Condizioni Estetiche e Allineamento</h4>
+                                    <div id="conditioniEstetiche" class="anamnesi-content"></div>
+                                </div>
+                            </div>
+
+                            <!-- Barra di completezza anamnesi -->
+                            <div id="anamneseCompletezzeBar" class="completezza-indicator"></div>
+                        </div>
+
+                        <!-- ====================================================================== -->
+                        <!-- 9 CATEGORIE CLINICHE SEZIONE -->
+                        <!-- ====================================================================== -->
+                        <div class="referto-card cliniche-section">
+                            <h3>📊 Analisi Cliniche - 9 Categorie Strutturate</h3>
+                            
+                            <!-- 1️⃣ DENTI PRESENTI, ASSENTI, SOSTITUITI -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione1Denti" class="categoria-clinica"></div>
+                            </div>
+
+                            <!-- 2️⃣ CARIE DENTALE -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione2Carie" class="categoria-clinica"></div>
+                            </div>
+
+                            <!-- 3️⃣ RESTAURI E OTTURAZIONI ESISTENTI -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione3Restauri" class="categoria-clinica"></div>
+                            </div>
+
+                            <!-- 4️⃣ ENDODONZIA -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione4Endodonzia" class="categoria-clinica"></div>
+                            </div>
+
+                            <!-- 5️⃣ CHIRURGIA ED ESTRAZIONI -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione5Chirurgia" class="categoria-clinica"></div>
+                            </div>
+
+                            <!-- 6️⃣ IMPIANTI E PROTESI FISSA -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione6Impianti" class="categoria-clinica"></div>
+                            </div>
+
+                            <!-- 7️⃣ IGIENE E PARODONTOLOGIA -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione7Igiene" class="categoria-clinica"></div>
+                            </div>
+
+                            <!-- 8️⃣ ESTETICA -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione8Estetica" class="categoria-clinica"></div>
+                            </div>
+
+                            <!-- 9️⃣ ORTODONZIA E PEDODONZIA -->
+                            <div class="categoria-wrapper">
+                                <div id="sezione9Ortodonta" class="categoria-clinica"></div>
                             </div>
                         </div>
 
-                        <!-- Referto Text Sections -->
-                        <div class="referto-card referto-text-section">
-                            <h3>Referto Medico</h3>
-
-                            <!-- Anamnesi -->
-                            <div class="referto-subsection">
-                                <h4>Anamnesi</h4>
-                                <div id="anamneseSection" class="referto-text">
-                                    <p id="anamneseText">Testo dell'anamnesi...</p>
-                                </div>
-                            </div>
-
-                            <!-- Esame Obiettivo -->
-                            <div class="referto-subsection">
-                                <h4>Esame Obiettivo</h4>
-                                <div id="esameSection" class="referto-text">
-                                    <p id="esameText">Testo dell'esame obiettivo...</p>
-                                </div>
-                            </div>
-
-                            <!-- Diagnosi -->
-                            <div class="referto-subsection">
-                                <h4>Diagnosi</h4>
-                                <div id="diagnosiSection" class="referto-text">
-                                    <p id="diagnosiText">Testo della diagnosi...</p>
-                                </div>
-                            </div>
-
-                            <!-- Piano Terapeutico -->
-                            <div class="referto-subsection">
-                                <h4>Piano Terapeutico</h4>
-                                <div id="pianoSection" class="referto-text">
-                                    <p id="pianoText">Testo del piano terapeutico...</p>
-                                </div>
-                            </div>
-
-                            <!-- Follow-up -->
-                            <div class="referto-subsection">
-                                <h4>Follow-up</h4>
-                                <div id="followupSection" class="referto-text">
-                                    <p id="followupText">Testo follow-up...</p>
-                                </div>
-                            </div>
-
-                            <!-- Firma Medico -->
-                            <div class="referto-signature">
-                                <p><strong>Medico:</strong> <span id="signatureName">Dr. Professionista</span></p>
-                                <p style="margin-top: 40px;">________________________</p>
-                                <p style="font-size: 0.9em; color: #666;">Firma e Data</p>
+                        <!-- ====================================================================== -->
+                        <!-- VALIDAZIONE SCHEMA COMPLETEZZA -->
+                        <!-- ====================================================================== -->
+                        <div class="referto-card validazione-section">
+                            <h3>✅ Validazione Referto - Completezza Schema</h3>
+                            <div id="validazioneSchemaContainer" class="validazione-content">
+                                <p style="text-align: center; color: #999;">Caricamento dati validazione...</p>
                             </div>
                         </div>
+
+                        <!-- ====================================================================== -->
+                        <!-- FIRMA MEDICO FINALE -->
+                        <!-- ====================================================================== -->
+                        <div class="referto-card referto-signature">
+                            <h3>Firma Medico</h3>
+                            <div style="text-align: center; padding: 40px 0;">
+                                <p style="font-size: 14px; margin: 10px 0;">
+                                    <strong>Dr./Dott.ssa <span id="signatureName">Professionista</span></strong>
+                                </p>
+                                <div style="margin: 40px 0; border-bottom: 1px solid #999; width: 300px; margin-left: auto; margin-right: auto;"></div>
+                                <p style="font-size: 12px; color: #999; margin-top: 10px;">
+                                    Firma e Data
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
                 </main>
             </div>
@@ -290,8 +363,10 @@
         </section>
     </div>
 
-    <!-- Notification Container -->
-    <div id="notificationContainer"></div>
+    <!-- ============================================================================ -->
+    <!-- NOTIFICATION CONTAINER -->
+    <!-- ============================================================================ -->
+    <div id="notificationContainer" class="notification-container"></div>
 
     <!-- ============================================================================ -->
     <!-- MODALS -->
@@ -303,33 +378,44 @@
             <div class="modal-content" onclick="event.stopPropagation()">
                 <button onclick="closePrivacyPolicy()" class="modal-close"><i class="fas fa-times"></i></button>
                 <h2>Privacy Policy</h2>
-                <div class="modal-body">
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <h3>1. Introduzione</h3>
-                    <p>Medical AI si impegna a proteggere la tua privacy.</p>
+                    <p>Medical AI si impegna a proteggere la tua privacy e la conformità al GDPR.</p>
                     
                     <h3>2. Dati Raccolti</h3>
-                    <p>Raccogliamo dati personali durante la registrazione:</p>
+                    <p>Raccogliamo dati personali durante l'utilizzo del servizio:</p>
                     <ul>
                         <li>Nome e cognome paziente</li>
                         <li>Email e telefono</li>
-                        <li>Registrazioni audio appuntamenti</li>
-                        <li>Informazioni studio</li>
+                        <li>Registrazioni audio appuntamenti medici</li>
+                        <li>Informazioni studio dentistico</li>
+                        <li>Dati clinici e referti medici</li>
                     </ul>
                     
                     <h3>3. Utilizzo dei Dati</h3>
-                    <p>Utilizziamo i dati per:</p>
+                    <p>Utilizziamo i dati esclusivamente per:</p>
                     <ul>
-                        <li>Gestire gli appuntamenti</li>
-                        <li>Generare referti</li>
-                        <li>Comunicazioni cliniche</li>
-                        <li>Migliorare i servizi</li>
+                        <li>Gestione appuntamenti clinici</li>
+                        <li>Generazione referti medici automatizzati</li>
+                        <li>Comunicazioni cliniche con pazienti</li>
+                        <li>Miglioramento continuo dei servizi</li>
+                        <li>Conformità normative e legali</li>
                     </ul>
                     
                     <h3>4. Protezione dei Dati</h3>
-                    <p>Implementiamo misure di sicurezza avanzate per proteggere i tuoi dati.</p>
+                    <p>Implementiamo misure di sicurezza avanzate:</p>
+                    <ul>
+                        <li>Crittografia end-to-end SSL/TLS</li>
+                        <li>Autenticazione multi-fattore</li>
+                        <li>Backup redondanti e cifrati</li>
+                        <li>Compliance GDPR e normativa medica</li>
+                    </ul>
                     
-                    <h3>5. Contatti</h3>
-                    <p>Per domande: info@medical-ai.it</p>
+                    <h3>5. Diritti dell'Utente</h3>
+                    <p>Hai il diritto di accedere, modificare o cancellare i tuoi dati in qualsiasi momento.</p>
+                    
+                    <h3>6. Contatti</h3>
+                    <p>Per questioni sulla privacy: privacy@medical-ai.it</p>
                 </div>
                 <div class="modal-actions">
                     <button class="btn-primary" onclick="acceptPrivacy()"><i class="fas fa-check"></i> Accetto</button>
@@ -344,27 +430,41 @@
         <div class="modal-overlay" onclick="closeTermsConditions()">
             <div class="modal-content" onclick="event.stopPropagation()">
                 <button onclick="closeTermsConditions()" class="modal-close"><i class="fas fa-times"></i></button>
-                <h2>Termini e Condizioni</h2>
-                <div class="modal-body">
+                <h2>Termini e Condizioni d'Uso</h2>
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <h3>1. Accettazione dei Termini</h3>
-                    <p>Utilizzando Medical AI, accetti questi Termini e Condizioni.</p>
+                    <p>Utilizzando Medical AI, accetti pienamente questi Termini e Condizioni e tutte le normative aplicabili.</p>
                     
                     <h3>2. Descrizione del Servizio</h3>
-                    <p>Medical AI fornisce registrazione audio e generazione referti medici.</p>
+                    <p>Medical AI fornisce servizi di registrazione audio vocale e generazione automatizzata di referti medici basati su trascrizione AI.</p>
                     
                     <h3>3. Responsabilità dell'Utente</h3>
+                    <p>L'utente (medico/professionista sanitario) è responsabile di:</p>
                     <ul>
-                        <li>Mantenere confidenzialità delle credenziali</li>
-                        <li>Ottenere consenso paziente prima di registrare</li>
-                        <li>Conformarsi alle leggi sulla privacy</li>
-                        <li>Non utilizzare per scopi illegali</li>
+                        <li>Ottenere consenso esplicito dal paziente prima di qualsiasi registrazione</li>
+                        <li>Mantenere la confidenzialità delle credenziali di accesso</li>
+                        <li>Conformarsi a tutte le leggi sulla privacy e protezione dati (GDPR, norme sanitarie)</li>
+                        <li>Verificare l'accuratezza dei dati inseriti nel sistema</li>
+                        <li>Non utilizzare il servizio per scopi illegali o non autorizzati</li>
                     </ul>
                     
-                    <h3>4. Limitazione di Responsabilità</h3>
-                    <p>Medical AI non è responsabile per perdite dovute a fattori esterni.</p>
+                    <h3>4. Limitazione della Responsabilità</h3>
+                    <p>Medical AI non è responsabile per:</p>
+                    <ul>
+                        <li>Perdite dovute a fattori esterni o causa di forza maggiore</li>
+                        <li>Errori nella trascrizione dovuti a qualità audio scarsa</li>
+                        <li>Mancata conformità dell'utente alle normative locali</li>
+                        <li>Utilizzo improprio del servizio da parte dell'utente</li>
+                    </ul>
                     
-                    <h3>5. Legge Applicabile</h3>
-                    <p>Regolato dalle leggi italiane.</p>
+                    <h3>5. Disponibilità del Servizio</h3>
+                    <p>Medical AI si impegna a mantenere una disponibilità di almeno il 99% del servizio, con manutenzione programmata esclusa.</p>
+                    
+                    <h3>6. Legge Applicabile</h3>
+                    <p>Questi termini sono regolati dalle leggi della Repubblica Italiana.</p>
+                    
+                    <h3>7. Modifiche ai Termini</h3>
+                    <p>Medical AI si riserva il diritto di modificare questi termini con preavviso di 30 giorni.</p>
                 </div>
                 <div class="modal-actions">
                     <button class="btn-primary" onclick="acceptTerms()"><i class="fas fa-check"></i> Accetto</button>
