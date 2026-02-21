@@ -1,31 +1,93 @@
 /* ============================================================================
-   REFERTO PAGE STYLES - Medical AI
+   REFERTO PAGE STYLES - Medical AI Schema 2.0-Completo
+   ============================================================================
+   
+   SCHEMA 2.0 FEATURES:
+   - 9 Categorie cliniche strutturate
+   - Anamnesi con indicatori obbligatorietà
+   - Odontogramma colorato standardizzato (8 colori)
+   - Validazione schema completezza
+   - Responsive design + print optimization
+*/
+
+/* ============================================================================
+   CSS VARIABLES & ROOT
    ============================================================================ */
 
 :root {
+    /* Brand Colors */
     --primary-color: #0061b1;
     --primary-light: #0073d4;
     --primary-lighter: #e3f2fd;
+    --primary-lightest: #f5f9fd;
+    
+    /* Status Colors */
+    --success-color: #26A69A;
+    --success-dark: #009688;
+    --warning-color: #FFC107;
+    --warning-dark: #F57F17;
     --danger-color: #EF5350;
     --danger-dark: #E53935;
+    --info-color: #2196F3;
+    --info-dark: #1976D2;
+    
+    /* Text & Background */
     --text-dark: #1a1a1a;
     --text-color: #333;
     --text-light: #666;
+    --text-lighter: #999;
     --bg-white: #ffffff;
     --bg-light: #f5f5f5;
+    --bg-lighter: #fafafa;
     --border-color: #e0e0e0;
+    --border-light: #eeeeee;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.2);
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 24px;
+    --spacing-2xl: 32px;
+    
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+    /* Transitions */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease-out;
 }
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    background: #f9f9f9;
+    background: var(--bg-light);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
+/* ============================================================================
+   MAIN CONTAINERS
+   ============================================================================ */
 
 .referto-container {
     display: flex;
@@ -41,66 +103,148 @@ body {
 
 .referto-main {
     flex: 1;
-    padding: 40px;
+    padding: var(--spacing-2xl);
     overflow-y: auto;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
     background: var(--bg-white);
 }
 
 .referto-content {
-    animation: fadeIn 0.3s ease-in;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    animation: fadeIn 0.4s ease-in;
 }
 
-/* ===== PAGE HEADER WITH ACTIONS ===== */
+/* ============================================================================
+   PAGE HEADER & ACTIONS
+   ============================================================================ */
+
 .page-header {
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #e3f2fd;
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 3px solid var(--primary-lighter);
 }
 
 .header-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 20px;
+    gap: var(--spacing-lg);
     flex-wrap: wrap;
 }
 
 .page-header h2 {
     color: var(--text-dark);
-    margin: 0;
     font-size: 1.8em;
-    flex: 1;
     font-weight: 700;
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
 }
 
-/* ===== REFERTO HEADER INFO ===== */
+.referto-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.btn-referto {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    white-space: nowrap;
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    user-select: none;
+    outline: none;
+}
+
+.btn-referto:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.btn-referto i {
+    font-size: 1.1em;
+}
+
+.btn-primary-color {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+}
+
+.btn-primary-color:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary-color:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow);
+}
+
+.btn-danger-color {
+    background: linear-gradient(135deg, var(--danger-color) 0%, var(--danger-dark) 100%);
+    color: white;
+}
+
+.btn-danger-color:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-danger-color:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow);
+}
+
+.btn-referto:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ============================================================================
+   REFERTO HEADER INFO
+   ============================================================================ */
+
 .referto-header {
-    background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%);
-    padding: 25px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    border: 1px solid #b3e5fc;
+    background: linear-gradient(135deg, var(--primary-lightest) 0%, var(--bg-lighter) 100%);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-2xl);
+    border: 2px solid var(--primary-lighter);
+    box-shadow: var(--shadow-sm);
 }
 
 .referto-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-xl);
 }
 
 .info-item {
     display: flex;
     flex-direction: column;
+    gap: var(--spacing-sm);
 }
 
 .info-item label {
     font-weight: 700;
-    color: #0061b1;
-    font-size: 0.95em;
-    margin-bottom: 8px;
+    color: var(--primary-color);
+    font-size: 0.9em;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -111,639 +255,615 @@ body {
     font-weight: 500;
 }
 
-/* ===== REFERTO ACTIONS BUTTONS ===== */
-.referto-actions {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
+/* ============================================================================
+   REFERTO CARDS
+   ============================================================================ */
 
-.btn-referto {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.95em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: inherit;
-    white-space: nowrap;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.btn-referto i {
-    font-size: 1.1em;
-}
-
-.btn-primary-color {
-    background: linear-gradient(135deg, #0061b1 0%, #0073d4 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(0, 97, 177, 0.15);
-}
-
-.btn-primary-color:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 97, 177, 0.25);
-    background: linear-gradient(135deg, #004a8a 0%, #0061b1 100%);
-}
-
-.btn-primary-color:active {
-    transform: translateY(0);
-}
-
-.btn-danger-color {
-    background: linear-gradient(135deg, #EF5350 0%, #E53935 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(239, 83, 80, 0.15);
-}
-
-.btn-danger-color:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(239, 83, 80, 0.25);
-    background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
-}
-
-.btn-danger-color:active {
-    transform: translateY(0);
-}
-
-.btn-referto:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-/* ===== CONFIRMATION DIALOG ===== */
-.confirmation-dialog {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    animation: fadeIn 0.3s ease-out;
-}
-
-.confirmation-content {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    max-width: 400px;
-    text-align: center;
-    animation: slideUp 0.3s ease-out;
-}
-
-.confirmation-content h3 {
-    color: var(--text-dark);
-    margin-bottom: 15px;
-    font-size: 1.2em;
-    font-weight: 600;
-}
-
-.confirmation-content p {
-    color: var(--text-light);
-    margin-bottom: 25px;
-    font-size: 0.95em;
-    line-height: 1.6;
-}
-
-.confirmation-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-/* ===== REFERTO CARD ===== */
 .referto-card {
     background: var(--bg-white);
-    padding: 30px;
-    border-radius: 12px;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    margin-bottom: 30px;
+    border: 1px solid var(--border-light);
+    margin-bottom: var(--spacing-xl);
+    transition: var(--transition);
+}
+
+.referto-card:hover {
+    box-shadow: var(--shadow-lg);
 }
 
 .referto-card h3 {
     color: var(--text-dark);
-    margin: 0 0 25px 0;
-    font-weight: 700;
     font-size: 1.4em;
-    padding-bottom: 15px;
-    border-bottom: 3px solid #0061b1;
+    font-weight: 700;
+    margin: 0 0 var(--spacing-xl) 0;
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 3px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
 }
 
-/* ===== ODONTOGRAMMA SECTION ===== */
+.referto-card h4 {
+    color: var(--text-dark);
+    font-size: 1.1em;
+    font-weight: 600;
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+}
+
+/* ============================================================================
+   ODONTOGRAMMA - TEETH VISUALIZATION
+   ============================================================================ */
+
 .odontogramma-section {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--spacing-lg);
 }
 
 .odontogramma-container {
-    background: var(--bg-light);
-    padding: 25px;
-    border-radius: 8px;
+    background: var(--bg-lighter);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-light);
     overflow-x: auto;
     min-height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #ddd;
+}
+
+.odontogramma-container svg {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+}
+
+.quadrant {
+    transition: var(--transition-fast);
 }
 
 .tooth {
-    fill: #f5f5f5;
-    stroke: #999;
+    fill: #FFFFFF;
+    stroke: #999999;
     stroke-width: 1;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition-fast);
 }
 
 .tooth:hover {
     stroke-width: 2;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-    opacity: 0.9;
+    stroke: var(--text-dark);
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
 }
 
-/* Colori denti per diverse procedure */
-.tooth.extract {
-    fill: #2196F3;
-    stroke: #1976D2;
+/* Colori standardizzati odontogramma */
+.tooth.otturazioni-esistenti {
+    fill: var(--warning-color) !important;
+    stroke: var(--warning-dark) !important;
 }
 
-.tooth.conservativa {
-    fill: #FFC107;
-    stroke: #F57F17;
+.tooth.carie {
+    fill: var(--danger-color) !important;
+    stroke: var(--danger-dark) !important;
 }
 
-.tooth.endodonzia {
-    fill: #F44336;
-    stroke: #D32F2F;
+.tooth.devitalizzazioni {
+    fill: #FF9800 !important;
+    stroke: #E65100 !important;
 }
 
-.tooth.impianto {
-    fill: #4CAF50;
-    stroke: #2E7D32;
+.tooth.impianti {
+    fill: var(--info-color) !important;
+    stroke: var(--info-dark) !important;
 }
 
-.tooth.extract-impianto {
-    fill: #9C27B0;
-    stroke: #6A1B9A;
+.tooth.corone {
+    fill: #9C27B0 !important;
+    stroke: #6A1B9A !important;
 }
 
-.tooth.endodonzia-corona {
-    fill: #FF9800;
-    stroke: #E65100;
+.tooth.elementi-mancanti {
+    fill: #757575 !important;
+    stroke: #424242 !important;
+    opacity: 0.6;
 }
 
-/* ===== ODONTOGRAMMA LEGEND ===== */
+.tooth.da-estrarre {
+    fill: #E91E63 !important;
+    stroke: #C2185B !important;
+}
+
+.tooth.sano {
+    fill: #FFFFFF !important;
+    stroke: #999999 !important;
+}
+
+/* ============================================================================
+   ODONTOGRAMMA LEGENDA
+   ============================================================================ */
+
 .odontogramma-legend {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    padding: 20px;
-    background: #e3f2fd;
-    border-radius: 8px;
-    border: 1px solid #90caf9;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--primary-lighter);
+    border-radius: var(--radius-md);
+    border: 2px solid #90caf9;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--bg-white);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .legend-color {
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-    border: 1px solid #666;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--text-lighter);
     flex-shrink: 0;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .legend-item span {
-    font-size: 0.9em;
+    font-size: 0.95em;
     color: var(--text-color);
     font-weight: 500;
 }
 
-/* ===== REFERTO TEXT SECTION ===== */
-.referto-text-section {
-    background: var(--bg-white);
-    padding: 40px;
+/* ============================================================================
+   ANAMNESI CLINICA
+   ============================================================================ */
+
+.anamnesi-section {
+    break-inside: avoid;
 }
 
-.referto-subsection {
-    margin-bottom: 40px;
-    padding-bottom: 35px;
-    border-bottom: 2px solid #e3f2fd;
+.anamnesi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
 }
 
-.referto-subsection:last-of-type {
-    border-bottom: none;
+.anamnesi-item {
+    padding: var(--spacing-lg);
+    background: var(--bg-lighter);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
 }
 
-.referto-subsection h4 {
-    color: #0061b1;
-    font-size: 1.25em;
-    margin: 0 0 18px 0;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e3f2fd;
+.anamnesi-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
 }
 
-.referto-text {
-    line-height: 1.85;
-    color: var(--text-color);
-    font-size: 0.98em;
-    text-align: justify;
-}
-
-.referto-text p {
-    margin-bottom: 15px;
-    color: var(--text-color);
-}
-
-.referto-text p:first-child {
+.anamnesi-item h4 {
+    font-size: 0.95em;
+    color: var(--primary-color);
+    margin: 0 0 var(--spacing-md) 0;
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--primary-lighter);
     font-weight: 600;
-    color: var(--text-dark);
-    margin-bottom: 12px;
 }
 
-.referto-text ul {
-    margin: 15px 0;
-    padding-left: 30px;
-    list-style: none;
-}
-
-.referto-text li {
-    margin-bottom: 12px;
-    padding-left: 20px;
-    position: relative;
+.anamnesi-content {
+    font-size: 0.95em;
+    color: var(--text-color);
     line-height: 1.6;
 }
 
-.referto-text li:before {
-    content: "•";
+.anamnesi-content strong {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.anamnesi-content em {
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.completezza-indicator {
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    border-left: 4px solid var(--success-color);
+    border-radius: var(--radius-md);
+    font-size: 0.95em;
+}
+
+.completezza-indicator strong {
+    color: var(--success-dark);
+}
+
+/* ============================================================================
+   CATEGORIE CLINICHE - 9 SEZIONI
+   ============================================================================ */
+
+.cliniche-section {
+    break-inside: avoid;
+}
+
+.categoria-wrapper {
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--bg-lighter);
+    border-radius: var(--radius-md);
+    border-left: 5px solid var(--primary-color);
+    transition: var(--transition);
+}
+
+.categoria-wrapper:hover {
+    border-left-color: var(--primary-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.categoria-clinica {
+    margin: 0;
+}
+
+.categoria-clinica h3 {
+    font-size: 1.15em;
+    color: var(--primary-color);
+    margin: 0 0 var(--spacing-lg) 0;
+    padding: 0;
+    border: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* ===== STATS GRID ===== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.stat-box {
+    background: var(--bg-white);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-box:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+}
+
+.stat-label {
+    font-size: 0.85em;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-md);
+}
+
+.stat-value {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* ===== ITEMS LISTS ===== */
+
+.lesioni-list,
+.restauri-list,
+.trattamenti-list,
+.interventi-list {
+    margin-top: var(--spacing-lg);
+}
+
+.lesione-item,
+.restauro-item,
+.trattamento-item,
+.intervento-item,
+.intervento-protesi-item,
+.intervento-estetico-item,
+.intervento-orto-item {
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-md);
+    background: var(--bg-white);
+    border-left: 5px solid;
+    border-radius: var(--radius-sm);
+    font-size: 0.95em;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.lesione-item { border-left-color: var(--warning-color); }
+.restauro-item { border-left-color: var(--warning-color); }
+.trattamento-item { border-left-color: #FF9800; }
+.intervento-item { border-left-color: var(--danger-color); }
+.intervento-protesi-item { border-left-color: var(--info-color); }
+.intervento-estetico-item { border-left-color: #E91E63; }
+.intervento-orto-item { border-left-color: var(--success-color); }
+
+.lesione-item:hover,
+.restauro-item:hover,
+.trattamento-item:hover,
+.intervento-item:hover,
+.intervento-protesi-item:hover,
+.intervento-estetico-item:hover,
+.intervento-orto-item:hover {
+    box-shadow: var(--shadow);
+    transform: translateX(4px);
+}
+
+.lesione-item strong,
+.restauro-item strong,
+.trattamento-item strong,
+.intervento-item strong,
+.intervento-protesi-item strong,
+.intervento-estetico-item strong,
+.intervento-orto-item strong {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.completezza-bar {
+    padding: var(--spacing-lg);
+    background: var(--bg-lighter);
+    border-radius: var(--radius-md);
+    font-size: 0.95em;
+    margin-top: var(--spacing-lg);
+}
+
+/* Progress bar styling */
+.completezza-bar div[style*="background"] {
+    transition: width 0.5s ease-in-out;
+}
+
+/* ============================================================================
+   VALIDAZIONE SCHEMA
+   ============================================================================ */
+
+.validazione-section {
+    break-inside: avoid;
+}
+
+.validazione-content {
+    font-size: 0.95em;
+    line-height: 1.7;
+}
+
+.validazione-content p {
+    margin: var(--spacing-md) 0;
+}
+
+.validazione-content ul {
+    margin: var(--spacing-md) 0;
+    padding-left: var(--spacing-xl);
+    list-style: none;
+}
+
+.validazione-content li {
+    margin: var(--spacing-sm) 0;
+    padding-left: var(--spacing-lg);
+    position: relative;
+}
+
+.validazione-content li:before {
+    content: "✓";
     position: absolute;
     left: 0;
-    color: #0061b1;
+    color: var(--success-color);
     font-weight: 700;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
-.referto-text strong {
-    color: #0061b1;
-    font-weight: 700;
-}
+/* ============================================================================
+   FIRMA MEDICO
+   ============================================================================ */
 
-/* ===== REFERTO SIGNATURE ===== */
 .referto-signature {
-    margin-top: 50px;
-    padding-top: 40px;
-    border-top: 3px solid #0061b1;
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-xl);
+    border-top: 3px solid var(--primary-color);
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
+    break-inside: avoid;
+}
+
+.referto-signature h3 {
+    border: none;
+    padding: 0;
+    margin-bottom: var(--spacing-xl);
 }
 
 .referto-signature p {
-    margin: 8px 0;
+    margin: var(--spacing-sm) 0;
     color: var(--text-color);
-    text-align: center;
 }
 
-.referto-signature p:first-child {
+.referto-signature p:first-of-type {
     font-weight: 700;
     font-size: 1.05em;
     color: var(--text-dark);
 }
 
-.referto-signature p:nth-child(2) {
-    margin-top: 50px;
-    font-size: 1.2em;
-    letter-spacing: 3px;
+.referto-signature div[style*="border-bottom"] {
+    margin: var(--spacing-2xl) 0;
 }
 
-.referto-signature p:last-child {
+.referto-signature p:last-of-type {
     font-size: 0.9em;
     color: var(--text-light);
-    margin-top: 10px;
 }
 
-/* ===== TOAST NOTIFICATIONS ===== */
-.notification {
+/* ============================================================================
+   LOADING STATE
+   ============================================================================ */
+
+.referto-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-2xl);
+}
+
+.referto-loading > div:first-child {
+    width: 60px;
+    height: 60px;
+    border: 4px solid var(--border-light);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.referto-loading h2 {
+    font-size: 1.5em;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.referto-loading p {
+    color: var(--text-light);
+    font-size: 0.95em;
+    margin: var(--spacing-sm) 0;
+}
+
+.referto-loading ul {
+    list-style: none;
+    padding: var(--spacing-lg);
+    text-align: left;
+    display: inline-block;
+}
+
+.referto-loading li {
+    padding: var(--spacing-sm) 0;
+    color: var(--text-color);
+}
+
+.referto-loading > div:last-child {
+    width: 100%;
+    max-width: 300px;
+    height: 8px;
+    background: var(--border-light);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.referto-loading > div:last-child > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    width: 30%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ============================================================================
+   ERROR STATE
+   ============================================================================ */
+
+.referto-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: var(--spacing-2xl);
+    text-align: center;
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+}
+
+.referto-error > div:first-child {
+    font-size: 60px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.referto-error h2 {
+    font-size: 1.5em;
+    color: var(--danger-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.referto-error p {
+    color: var(--text-light);
+    font-size: 0.95em;
+    margin-bottom: var(--spacing-xl);
+    max-width: 500px;
+}
+
+/* ============================================================================
+   NOTIFICATIONS/TOASTS
+   ============================================================================ */
+
+.notification-container {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 15px 20px;
-    border-radius: 8px;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
     z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.notification {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
     animation: slideIn 0.3s ease-out;
     font-weight: 600;
     box-shadow: var(--shadow-lg);
+    max-width: 400px;
+    min-width: 250px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
 }
 
 .notification.notification-success {
-    background: linear-gradient(135deg, #26A69A 0%, #009688 100%);
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%);
     color: white;
 }
 
 .notification.notification-error {
-    background: linear-gradient(135deg, #EF5350 0%, #E53935 100%);
+    background: linear-gradient(135deg, var(--danger-color) 0%, var(--danger-dark) 100%);
+    color: white;
+}
+
+.notification.notification-warning {
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-dark) 100%);
     color: white;
 }
 
 .notification.notification-info {
-    background: linear-gradient(135deg, #0061b1 0%, #0073d4 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
     color: white;
 }
 
-/* ===== PRINT STYLES ===== */
-@media print {
-    body {
-        background: white;
-    }
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
 
-    .referto-container {
-        background: white;
-    }
-
-    .referto-wrapper {
-        display: block;
-    }
-
-    .referto-main {
-        padding: 20px;
-        max-width: 100%;
-    }
-
-    .referto-actions {
-        display: none !important;
-    }
-
-    #headerContainer,
-    #sidebarContainer,
-    #footerContainer {
-        display: none;
-    }
-
-    .page-header {
-        border-bottom: none;
-        margin-bottom: 20px;
-    }
-
-    .page-header h2 {
-        font-size: 1.5em;
-    }
-
-    .referto-header {
-        background: white;
-        border: 1px solid #ddd;
-        page-break-inside: avoid;
-    }
-
-    .referto-card {
-        page-break-inside: avoid;
-        box-shadow: none;
-        border: 1px solid #ddd;
-    }
-
-    .referto-subsection {
-        page-break-inside: avoid;
-    }
-
-    .referto-signature {
-        page-break-inside: avoid;
-    }
-
-    .odontogramma-container {
-        background: white;
-    }
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1024px) {
-    .referto-main {
-        padding: 30px;
-    }
-
-    .header-top {
-        flex-direction: column;
-    }
-
-    .referto-actions {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .referto-info {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .odontogramma-legend {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .referto-card {
-        padding: 25px;
-    }
-}
-
-@media (max-width: 768px) {
-    .referto-main {
-        padding: 20px;
-    }
-
-    .referto-card {
-        padding: 20px;
-    }
-
-    .header-top {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .referto-actions {
-        width: 100%;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .btn-referto {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .referto-info {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .odontogramma-legend {
-        grid-template-columns: 1fr;
-    }
-
-    .odontogramma-container {
-        min-height: 280px;
-    }
-
-    .referto-text-section {
-        padding: 20px;
-    }
-
-    .referto-subsection h4 {
-        font-size: 1.1em;
-    }
-
-    .confirmation-content {
-        max-width: 90%;
-        margin: 20px;
-    }
-
-    .referto-signature {
-        margin-top: 40px;
-        padding-top: 30px;
-    }
-}
-
-@media (max-width: 480px) {
-    .referto-main {
-        padding: 15px;
-    }
-
-    .referto-card {
-        padding: 15px;
-    }
-
-    .referto-card h3 {
-        font-size: 1.2em;
-        margin-bottom: 15px;
-    }
-
-    .page-header h2 {
-        font-size: 1.4em;
-    }
-
-    .referto-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .btn-referto {
-        padding: 10px 14px;
-        font-size: 0.9em;
-    }
-
-    .btn-referto span {
-        display: none;
-    }
-
-    .btn-referto i {
-        font-size: 1.3em;
-    }
-
-    .referto-info {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-
-    .info-item label {
-        font-size: 0.85em;
-    }
-
-    .info-item span {
-        font-size: 0.95em;
-    }
-
-    .odontogramma-container {
-        padding: 10px;
-        min-height: 240px;
-    }
-
-    .odontogramma-legend {
-        grid-template-columns: 1fr;
-        padding: 12px;
-        gap: 10px;
-    }
-
-    .legend-item {
-        font-size: 0.85em;
-    }
-
-    .legend-color {
-        width: 25px;
-        height: 25px;
-    }
-
-    .referto-text {
-        font-size: 0.9em;
-        line-height: 1.7;
-    }
-
-    .referto-text p {
-        margin-bottom: 10px;
-    }
-
-    .referto-text li {
-        margin-bottom: 10px;
-        padding-left: 18px;
-    }
-
-    .referto-subsection {
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-    }
-
-    .referto-subsection h4 {
-        font-size: 1em;
-        margin-bottom: 12px;
-    }
-
-    .referto-signature {
-        margin-top: 30px;
-        padding-top: 20px;
-    }
-
-    .referto-signature p:nth-child(2) {
-        margin-top: 40px;
-        font-size: 1em;
-    }
-
-    .confirmation-content {
-        padding: 20px;
-    }
-
-    .confirmation-buttons {
-        flex-direction: column;
-    }
-
-    .confirmation-buttons .btn-referto {
-        width: 100%;
-    }
-
-    .notification {
-        right: 10px;
-        left: 10px;
-        top: 10px;
-    }
-}
-
-/* ===== ANIMATIONS ===== */
 @keyframes slideUp {
     from {
         transform: translateY(30px);
@@ -777,7 +897,6 @@ body {
     }
 }
 
-/* ===== LOADING SPINNER ===== */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -788,82 +907,455 @@ body {
     50% { width: 80%; }
 }
 
-.referto-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    gap: 30px;
-    padding: 40px;
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+    * {
+        box-shadow: none !important;
+    }
+
+    body {
+        background: white;
+    }
+
+    .referto-container {
+        background: white;
+    }
+
+    .referto-wrapper {
+        display: block;
+    }
+
+    .referto-main {
+        padding: 0;
+        max-width: 100%;
+        background: white;
+    }
+
+    #headerContainer,
+    #sidebarContainer,
+    #footerContainer {
+        display: none !important;
+    }
+
+    .page-header {
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: var(--spacing-xl);
+        padding-bottom: var(--spacing-lg);
+    }
+
+    .page-header h2 {
+        font-size: 1.4em;
+    }
+
+    .referto-actions {
+        display: none !important;
+    }
+
+    .referto-header {
+        background: white;
+        border: 1px solid var(--border-color);
+        page-break-inside: avoid;
+    }
+
+    .referto-card {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid var(--border-color);
+        page-break-after: auto;
+    }
+
+    .categoria-wrapper {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid var(--border-light);
+    }
+
+    .anamnesi-item {
+        page-break-inside: avoid;
+        box-shadow: none;
+    }
+
+    .referto-signature {
+        page-break-inside: avoid;
+    }
+
+    .odontogramma-container {
+        background: white;
+        border: 1px solid var(--border-color);
+        min-height: 300px;
+    }
+
+    .odontogramma-legend {
+        background: white;
+        border: 1px solid var(--border-color);
+    }
+
+    /* Hide non-essential elements */
+    .notification-container,
+    [onclick],
+    button {
+        display: none !important;
+    }
+
+    /* Optimize spacing for print */
+    .referto-main {
+        padding: 20px;
+    }
+
+    .referto-card {
+        margin-bottom: 15px;
+        padding: 15px;
+    }
+
+    .categoria-wrapper {
+        margin-bottom: 10px;
+        padding: 10px;
+    }
 }
 
-.referto-loading > div:first-child {
-    width: 60px;
-    height: 60px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #0061b1;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .referto-main {
+        padding: var(--spacing-xl);
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .referto-actions {
+        justify-content: flex-start;
+    }
+
+    .referto-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .odontogramma-legend {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .referto-card {
+        padding: var(--spacing-lg);
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-.referto-loading > div:nth-child(2) {
-    text-align: center;
+@media (max-width: 768px) {
+    .referto-main {
+        padding: var(--spacing-lg);
+    }
+
+    .referto-content {
+        padding: 0;
+    }
+
+    .referto-card {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-lg);
+    }
+
+    .page-header h2 {
+        flex: none;
+        width: 100%;
+    }
+
+    .referto-actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .btn-referto {
+        flex: 1;
+        padding: var(--spacing-md) var(--spacing-sm);
+        font-size: 0.85em;
+    }
+
+    .btn-referto span {
+        display: inline;
+    }
+
+    .referto-info {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .info-item {
+        gap: var(--spacing-sm);
+    }
+
+    .anamnesi-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .anamnesi-item {
+        padding: var(--spacing-md);
+    }
+
+    .odontogramma-container {
+        min-height: 280px;
+        padding: var(--spacing-md);
+    }
+
+    .odontogramma-legend {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        padding: var(--spacing-lg);
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+
+    .stat-box {
+        padding: var(--spacing-md);
+    }
+
+    .stat-label {
+        font-size: 0.8em;
+    }
+
+    .stat-value {
+        font-size: 1.5em;
+    }
+
+    .referto-signature {
+        margin-top: var(--spacing-xl);
+        padding-top: var(--spacing-lg);
+    }
 }
 
-.referto-loading h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: #0061b1;
+@media (max-width: 480px) {
+    .referto-main {
+        padding: var(--spacing-md);
+    }
+
+    .referto-card {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+        border-radius: var(--radius-md);
+    }
+
+    .referto-card h3 {
+        font-size: 1.15em;
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .page-header {
+        margin-bottom: var(--spacing-lg);
+        padding-bottom: var(--spacing-md);
+    }
+
+    .page-header h2 {
+        font-size: 1.3em;
+        gap: var(--spacing-sm);
+    }
+
+    .referto-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .btn-referto {
+        width: 100%;
+        padding: var(--spacing-md) var(--spacing-sm);
+        font-size: 0.8em;
+    }
+
+    .btn-referto span:not(:first-child) {
+        display: none;
+    }
+
+    .referto-header {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .referto-info {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .info-item label {
+        font-size: 0.8em;
+    }
+
+    .info-item span {
+        font-size: 0.95em;
+    }
+
+    .anamnesi-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+
+    .anamnesi-item {
+        padding: var(--spacing-md);
+    }
+
+    .anamnesi-item h4 {
+        font-size: 0.9em;
+    }
+
+    .categoria-wrapper {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .categoria-clinica h3 {
+        font-size: 1em;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .odontogramma-container {
+        min-height: 240px;
+        padding: var(--spacing-sm);
+    }
+
+    .odontogramma-legend {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md);
+    }
+
+    .legend-item {
+        padding: var(--spacing-sm);
+        font-size: 0.85em;
+    }
+
+    .legend-color {
+        width: 24px;
+        height: 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+
+    .stat-box {
+        padding: var(--spacing-md);
+    }
+
+    .stat-label {
+        font-size: 0.75em;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .stat-value {
+        font-size: 1.3em;
+    }
+
+    .lesione-item,
+    .restauro-item,
+    .trattamento-item,
+    .intervento-item,
+    .intervento-protesi-item,
+    .intervento-estetico-item,
+    .intervento-orto-item {
+        padding: var(--spacing-md);
+        font-size: 0.9em;
+    }
+
+    .referto-signature {
+        margin-top: var(--spacing-lg);
+        padding-top: var(--spacing-md);
+    }
+
+    .referto-signature p:nth-child(2) {
+        margin: var(--spacing-xl) 0;
+        font-size: 0.9em;
+    }
+
+    .notification-container {
+        left: var(--spacing-sm);
+        right: var(--spacing-sm);
+        top: var(--spacing-sm);
+    }
+
+    .notification {
+        max-width: none;
+        min-width: auto;
+        font-size: 0.9em;
+    }
+
+    .referto-loading {
+        gap: var(--spacing-lg);
+        padding: var(--spacing-lg);
+    }
+
+    .referto-loading > div:first-child {
+        width: 48px;
+        height: 48px;
+    }
+
+    .referto-loading h2 {
+        font-size: 1.2em;
+    }
+
+    .referto-loading p {
+        font-size: 0.9em;
+    }
 }
 
-.referto-loading p {
-    color: #666;
-    font-size: 16px;
-    margin: 10px 0;
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
-.referto-loading > div:last-child {
-    width: 100%;
-    max-width: 300px;
-    height: 8px;
-    background: #f0f0f0;
-    border-radius: 4px;
-    overflow: hidden;
-}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-dark: #e0e0e0;
+        --text-color: #cccccc;
+        --text-light: #999;
+        --bg-white: #1e1e1e;
+        --bg-light: #2a2a2a;
+        --bg-lighter: #333333;
+        --border-color: #444444;
+        --border-light: #3a3a3a;
+    }
 
-.referto-loading > div:last-child > div {
-    height: 100%;
-    background: linear-gradient(90deg, #0061b1, #00a8e8);
-    width: 30%;
-    animation: pulse 2s ease-in-out infinite;
-}
+    .referto-card,
+    .anamnesi-item,
+    .stat-box,
+    .legend-item {
+        background: var(--bg-white);
+        border-color: var(--border-light);
+    }
 
-/* ===== ERROR STATE ===== */
-.referto-error {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 60vh;
-    padding: 40px;
-    text-align: center;
-}
+    .odontogramma-container,
+    .odontogramma-legend {
+        background: var(--bg-lighter);
+    }
 
-.referto-error > div:first-child {
-    font-size: 60px;
-    margin-bottom: 20px;
-}
-
-.referto-error h2 {
-    font-size: 24px;
-    color: #d32f2f;
-    margin-bottom: 15px;
-}
-
-.referto-error p {
-    color: #666;
-    font-size: 16px;
-    margin-bottom: 30px;
-    max-width: 500px;
+    .categoria-wrapper {
+        background: var(--bg-light);
+    }
 }
