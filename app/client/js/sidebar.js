@@ -157,9 +157,13 @@ function reloadPageData(pageName) {
 function openConversations(event) {
     event.preventDefault();
     console.log('💬 Apertura pagina Conversazioni...');
-    window.location.href = 'https://app.chatlab.com/#/bots/bot/10732/chatlogs';
+    console.log('🔍 About to navigate to: https://app.chatlab.com/#/bots/bot/10732/chatlogs');
+    
+    // Aggiungi delay di 100ms per assicurare l'esecuzione
+    setTimeout(() => {
+        window.location.href = 'https://app.chatlab.com/#/bots/bot/10732/chatlogs';
+    }, 100);
 }
-
 /**
  * Sidebar fallback se il caricamento da file fallisce
  */
