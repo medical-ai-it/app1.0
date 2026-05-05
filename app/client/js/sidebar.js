@@ -159,7 +159,7 @@ function openConversations(event) {
     console.log('💬 Apertura pagina Conversazioni...');
     
     // Apri in nuova scheda
-    window.open('https://conversation.medical-ai.it', '_blank');
+    window.open('https://app.chatlab.com/#/bots/bot/10732/chatlogs', '_blank');
 }
 
 /**
