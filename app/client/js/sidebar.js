@@ -157,9 +157,7 @@ function reloadPageData(pageName) {
 function openConversations(event) {
     event.preventDefault();
     console.log('💬 Apertura pagina Conversazioni...');
-    
-    // Apri in nuova scheda
-    window.open('https://app.chatlab.com/#/bots/bot/10732/chatlogs', '_blank');
+    window.location.href = 'https://app.chatlab.com/#/bots/bot/10732/chatlogs';
 }
 
 /**
